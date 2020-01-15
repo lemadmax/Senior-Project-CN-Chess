@@ -20,8 +20,14 @@ import javax.swing.JFrame;
 
 public class GUI extends JFrame implements ActionListener {
 
+	public static final String pieces_name[] = {
+			"oos", "bk", "ba", "bb", "bn", "br", "bc", "bp",
+					"rk", "ra", "rb", "rn", "rr", "rc", "rp"
+	};
 	
 	Image BoardImg;
+	Image piecesImg[] = new Image[15];
+	Image selectImg;
 	
 	Container container;
 	Menu menu;
@@ -32,9 +38,23 @@ public class GUI extends JFrame implements ActionListener {
 	Canvas canvas;
 	
 	public GUI(String title) {
+		game currentGame = new game();
 		canvas = new Canvas() {
 			public void paint(Graphics g) {
 				g.drawImage(BoardImg, 0, 0, this);
+				for(int i = 0; i < 10; i++) {
+					for(int j = 0; j < 9; j++) {
+						int x = 24 + j * 57;
+						int y = 24 + i * 57;
+						int pieceId;
+						if(currentGame.gameBoard[i][j] > 0) pieceId = currentGame.gameBoard[i][j];
+						else if(currentGame.gameBoard[i][j] < 0) pieceId = -currentGame.gameBoard[i][j] + 7;
+						else pieceId = 0;
+						if(pieceId != 0) {
+							g.drawImage(piecesImg[pieceId], x, y, this);
+						}
+					}
+				}
 			}
 		};
 		initUI(title);
@@ -68,6 +88,7 @@ public class GUI extends JFrame implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		loadPieces();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = getSize();
 		if(frameSize.height > screenSize.height)
@@ -89,10 +110,30 @@ public class GUI extends JFrame implements ActionListener {
 		}
 	}
 
+	private void loadPieces() {
+		String path = "pieces/wood/";
+		for(int i = 1; i < 15; i++) {
+			File file = new File(path + pieces_name[i] + ".gif");
+			try {
+				piecesImg[i] = ImageIO.read(file);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		File imgFile = new File(path + pieces_name[0] + ".gif");
+		try {
+			selectImg = ImageIO.read(imgFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
+		System.out.println("hello");
 		new GUI("test");
 	}
 
