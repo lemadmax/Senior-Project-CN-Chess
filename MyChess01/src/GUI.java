@@ -9,6 +9,8 @@ import java.awt.MenuItem;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -36,9 +38,14 @@ public class GUI extends JFrame implements ActionListener {
 	MenuItem itemExit;
 	
 	Canvas canvas;
+	game currentGame;
+	
+	int pieceSelected = 0;
+	int placePlaced = 0;
+	boolean ifselectedAPiece = false;
 	
 	public GUI(String title) {
-		game currentGame = new game();
+		currentGame = new game();
 		canvas = new Canvas() {
 			public void paint(Graphics g) {
 				g.drawImage(BoardImg, 0, 0, this);
@@ -53,6 +60,20 @@ public class GUI extends JFrame implements ActionListener {
 						if(pieceId != 0) {
 							g.drawImage(piecesImg[pieceId], x, y, this);
 						}
+						if(pieceSelected != 0) {
+							int tx = (pieceSelected) % 9;
+							int ty = (pieceSelected) / 9;
+							tx = 24 + tx * 57;
+							ty = 24 + ty * 57;
+							g.drawImage(selectImg, tx, ty, this);
+						}
+						if(placePlaced != 0) {
+							int tx = (placePlaced) % 9;
+							int ty = (placePlaced) / 9;
+							tx = 24 + tx * 57;
+							ty = 24 + ty * 57;
+							g.drawImage(selectImg, tx, ty, this);
+						}
 					}
 				}
 			}
@@ -63,6 +84,60 @@ public class GUI extends JFrame implements ActionListener {
 	public void initUI(String title) {
 		container = getContentPane();
 		container.setLayout(null);
+		canvas.addMouseListener(new MouseListener() {
+			public void mouseClicked(MouseEvent mouseevent) {
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				int x = e.getX();
+				int y = e.getY();
+				if(x >= 24 && x <= 530 && y >= 24 && y <= 596) {
+					if(!ifselectedAPiece) {
+						int tempx = ((x - 24) / 57);
+						int tempy = ((y - 24) / 57);
+						if(currentGame.selectPiece(tempx, tempy)) {
+							pieceSelected = tempy * 9 + tempx;
+							ifselectedAPiece = true;
+							System.out.println(pieceSelected);
+							canvas.repaint();
+						}
+					}
+					else {
+						int tempx = ((x - 24) / 57);
+						int tempy = ((y - 24) / 57);
+						if(currentGame.playerMove(pieceSelected, tempx, tempy) == 1) {
+							placePlaced = tempy * 9 + tempx;
+							canvas.repaint();
+						}
+						else if(currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
+							pieceSelected = tempy * 9 + tempx;
+							canvas.repaint();
+						}
+					}
+				}
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 		canvas.setBounds(0, 0, 558, 620);
 		add(canvas);
 		menu = new Menu("menu");
@@ -106,7 +181,7 @@ public class GUI extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		if(e.getSource() == itemExit)  {
-			
+			System.out.println("lala");
 		}
 	}
 
