@@ -43,6 +43,7 @@ public class GUI extends JFrame implements ActionListener {
 	int pieceSelected = 0;
 	int placePlaced = 0;
 	boolean ifselectedAPiece = false;
+	boolean AIThinking = false;
 	
 	public GUI(String title) {
 		currentGame = new game();
@@ -92,29 +93,31 @@ public class GUI extends JFrame implements ActionListener {
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
-				int x = e.getX();
-				int y = e.getY();
-				if(x >= 24 && x <= 530 && y >= 24 && y <= 596) {
-					if(!ifselectedAPiece) {
-						int tempx = ((x - 24) / 57);
-						int tempy = ((y - 24) / 57);
-						if(currentGame.selectPiece(tempx, tempy)) {
-							pieceSelected = tempy * 9 + tempx;
-							ifselectedAPiece = true;
-							System.out.println(pieceSelected);
-							canvas.repaint();
+				if(!AIThinking) {
+					int x = e.getX();
+					int y = e.getY();
+					if(x >= 24 && x <= 530 && y >= 24 && y <= 596) {
+						if(!ifselectedAPiece) {
+							int tempx = ((x - 24) / 57);
+							int tempy = ((y - 24) / 57);
+							if(currentGame.selectPiece(tempx, tempy)) {
+								pieceSelected = tempy * 9 + tempx;
+								ifselectedAPiece = true;
+								System.out.println(pieceSelected);
+								canvas.repaint();
+							}
 						}
-					}
-					else {
-						int tempx = ((x - 24) / 57);
-						int tempy = ((y - 24) / 57);
-						if(currentGame.playerMove(pieceSelected, tempx, tempy) == 1) {
-							placePlaced = tempy * 9 + tempx;
-							canvas.repaint();
-						}
-						else if(currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
-							pieceSelected = tempy * 9 + tempx;
-							canvas.repaint();
+						else {
+							int tempx = ((x - 24) / 57);
+							int tempy = ((y - 24) / 57);
+							if(currentGame.playerMove(pieceSelected, tempx, tempy) == 1) {
+								placePlaced = tempy * 9 + tempx;
+								canvas.repaint();
+							}
+							else if(currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
+								pieceSelected = tempy * 9 + tempx;
+								canvas.repaint();
+							}
 						}
 					}
 				}
@@ -205,6 +208,15 @@ public class GUI extends JFrame implements ActionListener {
 		}
 	}
 	
+	private void AIMove() {
+		AIThinking = true;
+		(new Thread() {
+			public void run() {
+				currentGame.AIMakeMove();
+				AIThinking = false;
+			}
+		}).start();
+	}
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

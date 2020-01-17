@@ -10,6 +10,102 @@ public class game {
 	 * 6: pao
 	 * 7: bing
 	 * */
+//	piece blackRemain[] = new piece[16];
+//	piece redRemain[] = new piece[16];
+	
+	private int pieceValue[] = {
+		1000, 4, 4, 8, 17, 15, 3	
+	};
+	private int pieceMoveOption[] = {
+			4, 4, 4, 8, 34, 34, 4
+	};
+	private int pieceMovex[][] = {
+			{0, 0, 1, -1},
+			{1, 1, -1, -1},
+			{2, 2, -2, -2},
+			{1, 1, 2, 2, -1, -1, -2, -2},
+			{1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+			{0, 0, 1, -1}
+	};
+	private int pieceMovey[][] = {
+			{1, -1, 0, 0},
+			{1, -1, 1, -1},
+			{2, -2, 2, -2},
+			{2, -2, 1, -1, 2, -2, 1, -1},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -2, -3, -4, -5, -6, -7, -8, -9},
+			{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, -1, -2, -3, -4, -5, -6, -7, -8, -9},
+			{1, -1, 0, 0}
+	};
+	
+	public game() {
+		System.out.println("start he: " + evaluation(gameBoard));
+//		piece b1 = new piece(7, 0, 3);
+//		blackRemain[0] = b1;
+//		piece b2 = new piece(7, 2, 3);
+//		blackRemain[1] = b2;
+//		piece b3 = new piece(7, 4, 3);
+//		blackRemain[2] = b3;
+//		piece b4 = new piece(7, 6, 3);
+//		blackRemain[3] = b4;
+//		piece b5 = new piece(7, 8, 3);
+//		blackRemain[4] = b5;
+//		piece p1 = new piece(6, 1, 2);
+//		blackRemain[5] = p1;
+//		piece p2 = new piece(6, 7, 2);
+//		blackRemain[6] = p2;
+//		piece c1 = new piece(5, 0, 0);
+//		blackRemain[7] = c1;
+//		piece c2 = new piece(5, 8, 0);
+//		blackRemain[8] = c2;
+//		piece m1 = new piece(4, 1, 0);
+//		blackRemain[9] = m1;
+//		piece m2 = new piece(4, 7, 0);
+//		blackRemain[10] = m2;
+//		piece x1 = new piece(3, 2, 0);
+//		blackRemain[11] = x1;
+//		piece x2 = new piece(3, 6, 0);
+//		blackRemain[12] = x2;
+//		piece s1 = new piece(2, 3, 0);
+//		blackRemain[13] = s1;
+//		piece s2 = new piece(2, 5, 0);
+//		blackRemain[14] = s2;
+//		piece ji = new piece(1, 4, 0);
+//		blackRemain[15] = ji;
+//		
+//		piece rb1 = new piece(7, 0, 6);
+//		redRemain[0] = rb1;
+//		piece rb2 = new piece(7, 2, 6);
+//		redRemain[1] = rb2;
+//		piece rb3 = new piece(7, 4, 6);
+//		redRemain[2] = rb3;
+//		piece rb4 = new piece(7, 6, 6);
+//		redRemain[3] = rb4;
+//		piece rb5 = new piece(7, 8, 6);
+//		redRemain[4] = rb5;
+//		piece rp1 = new piece(6, 1, 7);
+//		redRemain[5] = rp1;
+//		piece rp2 = new piece(6, 7, 7);
+//		redRemain[6] = rp2;
+//		piece rc1 = new piece(5, 0, 9);
+//		redRemain[7] = rc1;
+//		piece rc2 = new piece(5, 8, 9);
+//		redRemain[8] = rc2;
+//		piece rm1 = new piece(4, 1, 9);
+//		redRemain[9] = rm1;
+//		piece rm2 = new piece(4, 7, 9);
+//		redRemain[10] = rm2;
+//		piece rx1 = new piece(3, 2, 9);
+//		redRemain[11] = rx1;
+//		piece rx2 = new piece(3, 6, 9);
+//		redRemain[12] = rx2;
+//		piece rs1 = new piece(2, 3, 9);
+//		redRemain[13] = rs1;
+//		piece rs2 = new piece(2, 5, 9);
+//		redRemain[14] = rs2;
+//		piece rji = new piece(1, 4, 9);
+//		redRemain[15] = rji;
+	}
 	
 	public static final int defBoard[][] = {
 			{ 5,  4,  3,  2,  1,  2,  3,  4,  5},
@@ -43,7 +139,80 @@ public class game {
 		else return false;
 	}
 	
+	public void AIMakeMove() {
+		maxValue(gameBoard, 100000, 0, 5);
+	}
+	
+	private int maxValue(int board[][], int alpha, int beta, int maxIteration) {
+		if(maxIteration == 0 || terminal(board)) return evaluation(board);
+		int v = -100000;
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 9; j++) {
+				if(board[i][j] > 0) {
+					for(int e = 0; e < pieceMoveOption[board[i][j] - 1]; e++) {
+						int nextB[][] = new int[10][9];
+						for(int k = 0; i < 10; k++) {
+							for(int t = 0; t < 9; t++) {
+								nextB[k][t] = board[k][t];
+							}
+						}
+						int tx = j + pieceMovex[board[i][j] - 1][e];
+						int ty = i + pieceMovey[board[i][j] - 1][e];
+						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
+						if(board[ty][tx] > 0) continue;
+						else if(board[ty][tx] <= 0) {
+							if(checkMoveLegitimacy(board[i][j], j, i, tx, ty)) {
+								nextB[ty][tx] = nextB[i][j];
+								nextB[i][j] = 0;
+							}
+						}
+						int tv = minValue(nextB, alpha, beta, maxIteration - 1);
+						if(tv > v) v = tv;
+						if(tv >= beta) return v;
+						if(tv > alpha) alpha = tv;
+					}
+				}
+			}
+		}
+		return v;
+	}
+	
+	private int minValue(int board[][], int alpha, int beta, int maxIteration) {
+		if(maxIteration == 0 || terminal(board)) return evaluation(board);
+		int v = 100000;
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 9; j++) {
+				if(board[i][j] < 0) {
+					for(int e = 0; e < pieceMoveOption[-board[i][j] - 1]; e++) {
+						int nextB[][] = new int[10][9];
+						for(int k = 0; i < 10; k++) {
+							for(int t = 0; t < 9; t++) {
+								nextB[k][t] = board[k][t];
+							}
+						}
+						int tx = j + pieceMovex[-board[i][j] - 1][e];
+						int ty = i + pieceMovey[-board[i][j] - 1][e];
+						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
+						if(board[ty][tx] < 0) continue;
+						else if(board[ty][tx] >= 0) {
+							if(checkMoveLegitimacy(-board[i][j], j, i, tx, ty)) {
+								nextB[ty][tx] = nextB[i][j];
+								nextB[i][j] = 0;
+							}
+						}
+						int tv = maxValue(nextB, alpha, beta, maxIteration - 1);
+						if(tv < v) v = tv;
+						if(tv <= alpha) return v;
+						if(tv < beta) beta = tv;
+					}
+				}
+			}
+		}
+		return v;
+	}
+	
 	public int playerMove(int piece, int plx, int ply) {
+		System.out.println("He: " + evaluation(gameBoard));
 		int px = (piece) % 9;
 		int py = (piece) / 9;
 		if(gameBoard[ply][plx] >= 0) {
@@ -58,6 +227,52 @@ public class game {
 			return 2;
 		}
 		else return 0;
+	}
+	
+	private boolean terminal(int board[][]) {
+		int bk = 0;
+		int rk = 0;
+		for(int i = 0 ; i < 10; i++) {
+			for(int j = 0; j < 9; j++) {
+				if(board[i][j] == 1) bk++;
+				else if(board[i][j] == -1) rk++;
+				
+			}
+		}
+		if(bk == 1 && rk == 1) return false;
+		else return true;
+	}
+	
+	private int evaluation(int board[][]) {
+		
+		int res = 0;
+		int redPower = 0;
+		int blackPower = 0;
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 9; j++) {
+				if(board[i][j] != 0) {
+					int currentPiece = Math.abs(board[i][j]);
+					int tempRes = 0;
+					for(int e = 0; e < pieceMoveOption[currentPiece - 1]; e++) {
+						int tx = j + pieceMovex[currentPiece - 1][e];
+						int ty = i + pieceMovey[currentPiece - 1][e];
+						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
+						if(!checkMoveLegitimacy(currentPiece, j, i, tx, ty)) continue;
+						if(board[ty][tx] != 0) tempRes += 5;
+						else tempRes += 1;
+					}
+					tempRes += pieceValue[currentPiece - 1];
+					System.out.println("piece: " + board[i][j] + " power: " + tempRes);
+					
+					if(board[i][j] > 0) blackPower += tempRes;
+					if(board[i][j] < 0) redPower += tempRes;
+				}
+			}
+		}
+		System.out.println("black: " + blackPower);
+		System.out.println("red: " + redPower);
+		res = blackPower - redPower;
+		return res;
 	}
 	
 	private boolean checkMoveLegitimacy(int p, int px, int py, int tx, int ty) {
