@@ -13,6 +13,13 @@ public class game {
 //	piece blackRemain[] = new piece[16];
 //	piece redRemain[] = new piece[16];
 	
+	private int MAX_ITER = 5;
+	
+	private int AIpx = 0;
+	private int AIpy = 0;
+	private int AItx = 0;
+	private int AIty = 0;
+	
 	private int pieceValue[] = {
 		1000, 4, 4, 8, 17, 15, 3	
 	};
@@ -39,72 +46,7 @@ public class game {
 	};
 	
 	public game() {
-		System.out.println("start he: " + evaluation(gameBoard));
-//		piece b1 = new piece(7, 0, 3);
-//		blackRemain[0] = b1;
-//		piece b2 = new piece(7, 2, 3);
-//		blackRemain[1] = b2;
-//		piece b3 = new piece(7, 4, 3);
-//		blackRemain[2] = b3;
-//		piece b4 = new piece(7, 6, 3);
-//		blackRemain[3] = b4;
-//		piece b5 = new piece(7, 8, 3);
-//		blackRemain[4] = b5;
-//		piece p1 = new piece(6, 1, 2);
-//		blackRemain[5] = p1;
-//		piece p2 = new piece(6, 7, 2);
-//		blackRemain[6] = p2;
-//		piece c1 = new piece(5, 0, 0);
-//		blackRemain[7] = c1;
-//		piece c2 = new piece(5, 8, 0);
-//		blackRemain[8] = c2;
-//		piece m1 = new piece(4, 1, 0);
-//		blackRemain[9] = m1;
-//		piece m2 = new piece(4, 7, 0);
-//		blackRemain[10] = m2;
-//		piece x1 = new piece(3, 2, 0);
-//		blackRemain[11] = x1;
-//		piece x2 = new piece(3, 6, 0);
-//		blackRemain[12] = x2;
-//		piece s1 = new piece(2, 3, 0);
-//		blackRemain[13] = s1;
-//		piece s2 = new piece(2, 5, 0);
-//		blackRemain[14] = s2;
-//		piece ji = new piece(1, 4, 0);
-//		blackRemain[15] = ji;
-//		
-//		piece rb1 = new piece(7, 0, 6);
-//		redRemain[0] = rb1;
-//		piece rb2 = new piece(7, 2, 6);
-//		redRemain[1] = rb2;
-//		piece rb3 = new piece(7, 4, 6);
-//		redRemain[2] = rb3;
-//		piece rb4 = new piece(7, 6, 6);
-//		redRemain[3] = rb4;
-//		piece rb5 = new piece(7, 8, 6);
-//		redRemain[4] = rb5;
-//		piece rp1 = new piece(6, 1, 7);
-//		redRemain[5] = rp1;
-//		piece rp2 = new piece(6, 7, 7);
-//		redRemain[6] = rp2;
-//		piece rc1 = new piece(5, 0, 9);
-//		redRemain[7] = rc1;
-//		piece rc2 = new piece(5, 8, 9);
-//		redRemain[8] = rc2;
-//		piece rm1 = new piece(4, 1, 9);
-//		redRemain[9] = rm1;
-//		piece rm2 = new piece(4, 7, 9);
-//		redRemain[10] = rm2;
-//		piece rx1 = new piece(3, 2, 9);
-//		redRemain[11] = rx1;
-//		piece rx2 = new piece(3, 6, 9);
-//		redRemain[12] = rx2;
-//		piece rs1 = new piece(2, 3, 9);
-//		redRemain[13] = rs1;
-//		piece rs2 = new piece(2, 5, 9);
-//		redRemain[14] = rs2;
-//		piece rji = new piece(1, 4, 9);
-//		redRemain[15] = rji;
+		
 	}
 	
 	public static final int defBoard[][] = {
@@ -139,37 +81,67 @@ public class game {
 		else return false;
 	}
 	
-	public void AIMakeMove() {
-		maxValue(gameBoard, 100000, 0, 5);
+	public int getPieceSelected() {
+		return AIpy * 9 + AIpx;
+	}
+	public int getPlacePlaced() {
+		return AIty * 9 + AItx;
 	}
 	
-	private int maxValue(int board[][], int alpha, int beta, int maxIteration) {
-		if(maxIteration == 0 || terminal(board)) return evaluation(board);
+	public void AIMakeMove() {
+		int v = maxValue(-100000, 100000, MAX_ITER);
+//		System.out.println(v);
+//		System.out.println("current: " + evaluation(gameBoard));
+//		System.out.println(AItx + " " + AIty);
+//		System.out.println(AIpx + " " + AIpy);
+		
+		gameBoard[AIty][AItx] = gameBoard[AIpy][AIpx];
+		gameBoard[AIpy][AIpx] = 0;
+//		for(int i = 0; i < 10; i++) {
+//			for(int j = 0; j < 9; j++) {
+//				System.out.print(gameBoard[i][j] + "\t");
+//			}
+//			System.out.println();
+//		}
+	}
+	
+	private int maxValue(int alpha, int beta, int maxIteration) {
+		if(maxIteration == 0 || terminal(gameBoard)) return evaluation(gameBoard);
 		int v = -100000;
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
-				if(board[i][j] > 0) {
-					for(int e = 0; e < pieceMoveOption[board[i][j] - 1]; e++) {
-						int nextB[][] = new int[10][9];
-						for(int k = 0; i < 10; k++) {
-							for(int t = 0; t < 9; t++) {
-								nextB[k][t] = board[k][t];
-							}
-						}
-						int tx = j + pieceMovex[board[i][j] - 1][e];
-						int ty = i + pieceMovey[board[i][j] - 1][e];
+				if(gameBoard[i][j] > 0) {
+					for(int e = 0; e < pieceMoveOption[gameBoard[i][j] - 1]; e++) {
+						int tx = j + pieceMovex[gameBoard[i][j] - 1][e];
+						int ty = i + pieceMovey[gameBoard[i][j] - 1][e];
+						
 						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
-						if(board[ty][tx] > 0) continue;
-						else if(board[ty][tx] <= 0) {
-							if(checkMoveLegitimacy(board[i][j], j, i, tx, ty)) {
-								nextB[ty][tx] = nextB[i][j];
-								nextB[i][j] = 0;
+						int temp = gameBoard[ty][tx];
+						if(gameBoard[ty][tx] <= 0) {
+							if(checkMoveLegitimacy(gameBoard[i][j], j, i, tx, ty)) {
+								gameBoard[ty][tx] = gameBoard[i][j];
+								gameBoard[i][j] = 0;
+							
+						
+								int tv = minValue(alpha, beta, maxIteration - 1);
+								
+								gameBoard[i][j] = gameBoard[ty][tx];
+								gameBoard[ty][tx] = temp;
+								
+								//System.out.println("tv: " + tv);
+								if(tv > v) {
+									v = tv;
+									if(maxIteration == MAX_ITER) {
+										AIpx = j;
+										AIpy = i;
+										AItx = tx;
+										AIty = ty;
+									}
+								}
+								if(tv >= beta) return v;
+								if(tv > alpha) alpha = tv;
 							}
 						}
-						int tv = minValue(nextB, alpha, beta, maxIteration - 1);
-						if(tv > v) v = tv;
-						if(tv >= beta) return v;
-						if(tv > alpha) alpha = tv;
 					}
 				}
 			}
@@ -177,33 +149,34 @@ public class game {
 		return v;
 	}
 	
-	private int minValue(int board[][], int alpha, int beta, int maxIteration) {
-		if(maxIteration == 0 || terminal(board)) return evaluation(board);
+	private int minValue(int alpha, int beta, int maxIteration) {
+		if(maxIteration == 0 || terminal(gameBoard)) return evaluation(gameBoard);
 		int v = 100000;
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
-				if(board[i][j] < 0) {
-					for(int e = 0; e < pieceMoveOption[-board[i][j] - 1]; e++) {
-						int nextB[][] = new int[10][9];
-						for(int k = 0; i < 10; k++) {
-							for(int t = 0; t < 9; t++) {
-								nextB[k][t] = board[k][t];
-							}
-						}
-						int tx = j + pieceMovex[-board[i][j] - 1][e];
-						int ty = i + pieceMovey[-board[i][j] - 1][e];
+				if(gameBoard[i][j] < 0) {
+					for(int e = 0; e < pieceMoveOption[-gameBoard[i][j] - 1]; e++) {
+						
+						int tx = j + pieceMovex[-gameBoard[i][j] - 1][e];
+						int ty = i + pieceMovey[-gameBoard[i][j] - 1][e];
+						
 						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
-						if(board[ty][tx] < 0) continue;
-						else if(board[ty][tx] >= 0) {
-							if(checkMoveLegitimacy(-board[i][j], j, i, tx, ty)) {
-								nextB[ty][tx] = nextB[i][j];
-								nextB[i][j] = 0;
+						int temp = gameBoard[ty][tx];
+						if(gameBoard[ty][tx] >= 0) {
+							if(checkMoveLegitimacy(-gameBoard[i][j], j, i, tx, ty)) {
+								gameBoard[ty][tx] = gameBoard[i][j];
+								gameBoard[i][j] = 0;
+								int tv = maxValue(alpha, beta, maxIteration - 1);
+								
+								gameBoard[i][j] = gameBoard[ty][tx];
+								gameBoard[ty][tx] = temp;
+							
+								if(tv < v) v = tv;
+								if(tv <= alpha) return v;
+								if(tv < beta) beta = tv;
 							}
 						}
-						int tv = maxValue(nextB, alpha, beta, maxIteration - 1);
-						if(tv < v) v = tv;
-						if(tv <= alpha) return v;
-						if(tv < beta) beta = tv;
+						
 					}
 				}
 			}
@@ -212,7 +185,6 @@ public class game {
 	}
 	
 	public int playerMove(int piece, int plx, int ply) {
-		System.out.println("He: " + evaluation(gameBoard));
 		int px = (piece) % 9;
 		int py = (piece) / 9;
 		if(gameBoard[ply][plx] >= 0) {
@@ -258,19 +230,24 @@ public class game {
 						int ty = i + pieceMovey[currentPiece - 1][e];
 						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
 						if(!checkMoveLegitimacy(currentPiece, j, i, tx, ty)) continue;
-						if(board[ty][tx] != 0) tempRes += 5;
+						if(board[ty][tx] != 0) {
+							int p = Math.abs(board[ty][tx]);
+							if((board[i][j] > 0 && board[ty][tx] > 0) || (board[i][j] < 0 && board[ty][tx] < 0)) {
+								tempRes += 3;
+							}
+							else {
+								tempRes += pieceValue[p - 1];
+							}
+						}
 						else tempRes += 1;
 					}
 					tempRes += pieceValue[currentPiece - 1];
-					System.out.println("piece: " + board[i][j] + " power: " + tempRes);
 					
 					if(board[i][j] > 0) blackPower += tempRes;
 					if(board[i][j] < 0) redPower += tempRes;
 				}
 			}
 		}
-		System.out.println("black: " + blackPower);
-		System.out.println("red: " + redPower);
 		res = blackPower - redPower;
 		return res;
 	}

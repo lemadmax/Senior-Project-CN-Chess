@@ -97,27 +97,34 @@ public class GUI extends JFrame implements ActionListener {
 					int x = e.getX();
 					int y = e.getY();
 					if(x >= 24 && x <= 530 && y >= 24 && y <= 596) {
+						int tempx = ((x - 24) / 57);
+						int tempy = ((y - 24) / 57);
+						int xx = tempx * 57 + 24;
+						int yy = tempy * 57 + 24;
 						if(!ifselectedAPiece) {
-							int tempx = ((x - 24) / 57);
-							int tempy = ((y - 24) / 57);
+							
 							if(currentGame.selectPiece(tempx, tempy)) {
 								pieceSelected = tempy * 9 + tempx;
 								ifselectedAPiece = true;
-								System.out.println(pieceSelected);
-								canvas.repaint();
+								
+								canvas.repaint(xx, yy, 57, 57);
 							}
 						}
 						else {
-							int tempx = ((x - 24) / 57);
-							int tempy = ((y - 24) / 57);
+							int sx = pieceSelected % 9;
+							int sy = pieceSelected / 9;
+							sx = sx * 57 + 24;
+							sy = sy * 57 + 24;
 							if(currentGame.playerMove(pieceSelected, tempx, tempy) == 1) {
 								placePlaced = tempy * 9 + tempx;
-								canvas.repaint();
+								canvas.repaint(xx, yy, 57, 57);
+								AIMove();
 							}
 							else if(currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
 								pieceSelected = tempy * 9 + tempx;
-								canvas.repaint();
+								canvas.repaint(xx, yy, 57, 57);
 							}
+							canvas.repaint(sx, sy, 57, 57);
 						}
 					}
 				}
@@ -214,6 +221,17 @@ public class GUI extends JFrame implements ActionListener {
 			public void run() {
 				currentGame.AIMakeMove();
 				AIThinking = false;
+				pieceSelected = currentGame.getPieceSelected();
+				placePlaced = currentGame.getPlacePlaced();
+//				int px = pieceSelected % 9;
+//				int py = pieceSelected / 9;
+//				int tx = placePlaced % 9;
+//				int ty = placePlaced / 9;
+//				px = px * 57 + 24;
+//				py = py * 57 + 24;
+//				tx = tx * 57 + 24;
+//				ty = ty * 57 + 24;
+				canvas.repaint();
 			}
 		}).start();
 	}
@@ -221,7 +239,7 @@ public class GUI extends JFrame implements ActionListener {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("hello");
-		new GUI("test");
+		new GUI("Alpha-Bob 1.0");
 	}
 
 	
