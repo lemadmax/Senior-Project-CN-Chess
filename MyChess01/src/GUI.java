@@ -78,6 +78,7 @@ public class GUI extends JFrame implements ActionListener {
 					}
 				}
 			}
+			
 		};
 		initUI(title);
 	}
@@ -219,6 +220,12 @@ public class GUI extends JFrame implements ActionListener {
 		AIThinking = true;
 		(new Thread() {
 			public void run() {
+				try {
+					sleep(10);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				currentGame.AIMakeMove();
 				AIThinking = false;
 				pieceSelected = currentGame.getPieceSelected();

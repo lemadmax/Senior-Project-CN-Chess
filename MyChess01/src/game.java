@@ -21,7 +21,7 @@ public class game {
 	private int AIty = 0;
 	
 	private int pieceValue[] = {
-		1000, 4, 4, 8, 17, 15, 3	
+		1000, 10, 10, 10, 10, 10, 10	
 	};
 	private int pieceMoveOption[] = {
 			4, 4, 4, 8, 34, 34, 4
@@ -91,18 +91,45 @@ public class game {
 	public void AIMakeMove() {
 		int v = maxValue(-100000, 100000, MAX_ITER);
 //		System.out.println(v);
-//		System.out.println("current: " + evaluation(gameBoard));
+		
 //		System.out.println(AItx + " " + AIty);
 //		System.out.println(AIpx + " " + AIpy);
 		
 		gameBoard[AIty][AItx] = gameBoard[AIpy][AIpx];
 		gameBoard[AIpy][AIpx] = 0;
+		System.out.println("current: " + evaluation(gameBoard));
 //		for(int i = 0; i < 10; i++) {
 //			for(int j = 0; j < 9; j++) {
 //				System.out.print(gameBoard[i][j] + "\t");
 //			}
 //			System.out.println();
 //		}
+	}
+	
+	private int isGameOver() {
+		boolean bk = false;
+		boolean rk = false;
+		for(int i = 0; i < 3; i++) {
+			for(int j = 3; j < 6; j++) {
+				if(gameBoard[i][j] == 1) {
+					bk = true;
+					break;
+				}
+			}
+			if(bk) break;
+		}
+		for(int i = 7; i < 10; i++) {
+			for(int j = 3; j < 6; j++) {
+				if(gameBoard[i][j] == -1) {
+					rk = true;
+					break;
+				}
+			}
+			if(rk) break;
+		}
+		if(rk == false) return -1;
+		else if(bk == false) return 1;
+		else return 0;
 	}
 	
 	private int maxValue(int alpha, int beta, int maxIteration) {
@@ -121,8 +148,14 @@ public class game {
 							if(checkMoveLegitimacy(gameBoard[i][j], j, i, tx, ty)) {
 								gameBoard[ty][tx] = gameBoard[i][j];
 								gameBoard[i][j] = 0;
-							
-						
+								
+								if(isGameOver() != 0) {
+									v = evaluation(gameBoard);
+									gameBoard[i][j] = gameBoard[ty][tx];
+									gameBoard[ty][tx] = temp;
+									return v;
+								}
+								
 								int tv = minValue(alpha, beta, maxIteration - 1);
 								
 								gameBoard[i][j] = gameBoard[ty][tx];
@@ -138,6 +171,21 @@ public class game {
 										AIty = ty;
 									}
 								}
+//								if(tv == v) {
+//									double rand = Math.random();
+//									System.out.println("random num: " + rand);
+//									if(rand < 0.5) {
+//										
+//										v = tv;
+//										if(maxIteration == MAX_ITER) {
+//											AIpx = j;
+//											AIpy = i;
+//											AItx = tx;
+//											AIty = ty;
+//										}
+//									}
+//								}
+								
 								if(tv >= beta) return v;
 								if(tv > alpha) alpha = tv;
 							}
@@ -215,6 +263,51 @@ public class game {
 		else return true;
 	}
 	
+	private boolean checkIfGeneralAlign() {
+		
+		for(int i = 0; i < 3; i++) {
+			for(int j = 3; j < 6; j++) {
+				if(gameBoard[i][j] == 1) {
+					for(int k = 1; k < 10; k++) {
+						if(i + k > 9) {
+							return false;
+						}
+						else if(gameBoard[i + k][j] == -1) {
+							return true;
+						}
+						else if(gameBoard[i + k][j] != 0) {
+							return false;
+						}
+						else {
+							continue;
+						}
+					}
+					return false;
+				}
+			}
+		}
+		
+		return false;
+	}
+	
+	private boolean checkIfPieceUnderAtt(int p, int px, int py) {
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 9; j++) {
+				if((gameBoard[i][j] < 0 && p < 0) || (gameBoard[i][j] > 0 && p > 0)) {
+					if(checkMoveLegitimacy(Math.abs(gameBoard[i][j]), px, py, j, i)) {
+						return false;
+					}
+				}
+				if((gameBoard[i][j] < 0 && p > 0) || (gameBoard[i][j] > 0 && p < 0)) {
+					if(checkMoveLegitimacy(Math.abs(gameBoard[i][j]), px, py, j, i)) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	private int evaluation(int board[][]) {
 		
 		int res = 0;
@@ -233,14 +326,26 @@ public class game {
 						if(board[ty][tx] != 0) {
 							int p = Math.abs(board[ty][tx]);
 							if((board[i][j] > 0 && board[ty][tx] > 0) || (board[i][j] < 0 && board[ty][tx] < 0)) {
-								tempRes += 3;
+								if(board[i][j] != 1 && board[i][j] != -1) {
+									if(checkIfPieceUnderAtt(board[ty][tx], tx, ty)) {
+										tempRes += pieceValue[p - 1];
+									}
+								}
 							}
 							else {
-								tempRes += pieceValue[p - 1];
+								if(board[i][j] != 1 && board[i][j] != -1) {
+									if(!checkIfPieceUnderAtt(board[ty][tx], tx, ty)) {
+										tempRes += pieceValue[p - 1];
+									}
+								}
+								else {
+									tempRes += pieceValue[p - 1];
+								}
 							}
 						}
-						else tempRes += 1;
+						//else tempRes += 1;
 					}
+					
 					tempRes += pieceValue[currentPiece - 1];
 					
 					if(board[i][j] > 0) blackPower += tempRes;
@@ -253,6 +358,16 @@ public class game {
 	}
 	
 	private boolean checkMoveLegitimacy(int p, int px, int py, int tx, int ty) {
+		int temp = gameBoard[ty][tx];
+		gameBoard[ty][tx] = gameBoard[py][px];
+		gameBoard[py][px] = 0;
+		if(checkIfGeneralAlign()) {
+			gameBoard[py][px] = gameBoard[ty][tx];
+			gameBoard[ty][tx] = temp;
+			return false;
+		}
+		gameBoard[py][px] = gameBoard[ty][tx];
+		gameBoard[ty][tx] = temp;
 		switch(p) {
 		case 1:
 			if(Math.abs(tx - px) + Math.abs(ty - py) == 1 && tx >= 3 && tx <= 5 && ((ty >= 7 && ty <= 9) || (ty >= 0 && ty <= 2))) {
