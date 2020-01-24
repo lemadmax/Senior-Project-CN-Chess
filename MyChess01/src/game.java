@@ -13,7 +13,7 @@ public class game {
 //	piece blackRemain[] = new piece[16];
 //	piece redRemain[] = new piece[16];
 	
-	private int MAX_ITER = 5;
+	private int MAX_ITER = 4;
 	
 	private int AIpx = 0;
 	private int AIpy = 0;
@@ -21,7 +21,7 @@ public class game {
 	private int AIty = 0;
 	
 	private int pieceValue[] = {
-		1000, 10, 10, 10, 10, 10, 10	
+		1000, 50, 50, 55, 65, 60, 45	
 	};
 	private int pieceMoveOption[] = {
 			4, 4, 4, 8, 34, 34, 4
@@ -171,20 +171,6 @@ public class game {
 										AIty = ty;
 									}
 								}
-//								if(tv == v) {
-//									double rand = Math.random();
-//									System.out.println("random num: " + rand);
-//									if(rand < 0.5) {
-//										
-//										v = tv;
-//										if(maxIteration == MAX_ITER) {
-//											AIpx = j;
-//											AIpy = i;
-//											AItx = tx;
-//											AIty = ty;
-//										}
-//									}
-//								}
 								
 								if(tv >= beta) return v;
 								if(tv > alpha) alpha = tv;
@@ -291,21 +277,27 @@ public class game {
 	}
 	
 	private boolean checkIfPieceUnderAtt(int p, int px, int py) {
+		int res = 0;
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
 				if((gameBoard[i][j] < 0 && p < 0) || (gameBoard[i][j] > 0 && p > 0)) {
 					if(checkMoveLegitimacy(Math.abs(gameBoard[i][j]), px, py, j, i)) {
-						return false;
+						res--;
 					}
 				}
 				if((gameBoard[i][j] < 0 && p > 0) || (gameBoard[i][j] > 0 && p < 0)) {
 					if(checkMoveLegitimacy(Math.abs(gameBoard[i][j]), px, py, j, i)) {
-						return true;
+						res++;
 					}
 				}
 			}
 		}
-		return false;
+		if(res > 0) {
+			return true;
+		}
+		else {
+			return false;
+		}
 	}
 	
 	private int evaluation(int board[][]) {
@@ -316,38 +308,26 @@ public class game {
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
 				if(board[i][j] != 0) {
+					
 					int currentPiece = Math.abs(board[i][j]);
 					int tempRes = 0;
-					for(int e = 0; e < pieceMoveOption[currentPiece - 1]; e++) {
-						int tx = j + pieceMovex[currentPiece - 1][e];
-						int ty = i + pieceMovey[currentPiece - 1][e];
-						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
-						if(!checkMoveLegitimacy(currentPiece, j, i, tx, ty)) continue;
-						if(board[ty][tx] != 0) {
-							int p = Math.abs(board[ty][tx]);
-							if((board[i][j] > 0 && board[ty][tx] > 0) || (board[i][j] < 0 && board[ty][tx] < 0)) {
-								if(board[i][j] != 1 && board[i][j] != -1) {
-									if(checkIfPieceUnderAtt(board[ty][tx], tx, ty)) {
-										tempRes += pieceValue[p - 1];
-									}
-								}
-							}
-							else {
-								if(board[i][j] != 1 && board[i][j] != -1) {
-									if(!checkIfPieceUnderAtt(board[ty][tx], tx, ty)) {
-										tempRes += pieceValue[p - 1];
-									}
-								}
-								else {
-									tempRes += pieceValue[p - 1];
-								}
-							}
+					if(currentPiece != 1) {
+						if(!checkIfPieceUnderAtt(board[i][j], j, i)) {
+							tempRes += pieceValue[currentPiece - 1];
 						}
-						//else tempRes += 1;
 					}
-					
-					tempRes += pieceValue[currentPiece - 1];
-					
+					else {
+						tempRes += pieceValue[currentPiece - 1];
+					}
+//					for(int e = 0; e < pieceMoveOption[currentPiece - 1]; e++) {
+//						int tx = j + pieceMovex[currentPiece - 1][e];
+//						int ty = i + pieceMovey[currentPiece - 1][e];
+//						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
+//						if(!checkMoveLegitimacy(currentPiece, j, i, tx, ty)) continue;
+//						if(board[ty][tx] == 0) 
+//							tempRes += 1;
+//					}
+										
 					if(board[i][j] > 0) blackPower += tempRes;
 					if(board[i][j] < 0) redPower += tempRes;
 				}
