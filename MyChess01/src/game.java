@@ -74,6 +74,19 @@ public class game {
 			{-5, -4, -3, -2, -1, -2, -3, -4, -5}
 	};
 	
+//	public int gameBoard[][] = {
+//			{ 0,  0,  3,  2,  1,  2,  3,  4,  5},
+//			{ 0,  0,  0,  0,  -5,  0,  0,  0,  0},
+//			{ 0,  6,  0,  0,  0,  0,  0,  6,  0},
+//			{ 7,  0,  7,  0,  7,  0,  7,  0,  7},
+//			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+//			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+//			{-7,  0, -7,  0, -7,  0, -7,  0, -7},
+//			{ 0, -6,  0,  0,  0,  0,  0, -6,  0},
+//			{ 0,  0,  0,  0,  5,  0,  0,  0,  0},
+//			{-5, -4, -3, -2, -1, -2, -3, -4, 0}
+//	};
+	
 	public boolean selectPiece(int px, int py) {
 		if(gameBoard[py][px] < 0) {
 			return true;
@@ -106,7 +119,7 @@ public class game {
 //		}
 	}
 	
-	private int isGameOver() {
+	public int isGameOver() {
 		boolean bk = false;
 		boolean rk = false;
 		for(int i = 0; i < 3; i++) {
@@ -150,7 +163,12 @@ public class game {
 								gameBoard[i][j] = 0;
 								
 								if(isGameOver() != 0) {
+									
 									v = evaluation(gameBoard);
+									AIpx = j;
+									AIpy = i;
+									AItx = tx;
+									AIty = ty;
 									gameBoard[i][j] = gameBoard[ty][tx];
 									gameBoard[ty][tx] = temp;
 									return v;
@@ -200,6 +218,14 @@ public class game {
 							if(checkMoveLegitimacy(-gameBoard[i][j], j, i, tx, ty)) {
 								gameBoard[ty][tx] = gameBoard[i][j];
 								gameBoard[i][j] = 0;
+								
+								if(isGameOver() != 0) {
+									v = evaluation(gameBoard);
+									gameBoard[i][j] = gameBoard[ty][tx];
+									gameBoard[ty][tx] = temp;
+									return v;
+								}
+								
 								int tv = maxValue(alpha, beta, maxIteration - 1);
 								
 								gameBoard[i][j] = gameBoard[ty][tx];

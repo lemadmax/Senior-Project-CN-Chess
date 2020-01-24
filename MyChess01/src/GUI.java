@@ -119,7 +119,13 @@ public class GUI extends JFrame implements ActionListener {
 							if(currentGame.playerMove(pieceSelected, tempx, tempy) == 1) {
 								placePlaced = tempy * 9 + tempx;
 								canvas.repaint(xx, yy, 57, 57);
+								if(currentGame.isGameOver() == 1) {
+									System.out.println("red win");
+								}
 								AIMove();
+								if(currentGame.isGameOver() == -1) {
+									System.out.println("black win");
+								}
 							}
 							else if(currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
 								pieceSelected = tempy * 9 + tempx;
