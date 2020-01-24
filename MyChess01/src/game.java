@@ -14,6 +14,10 @@ public class game {
 //	piece redRemain[] = new piece[16];
 	
 	private int MAX_ITER = 4;
+	private int MAX_ITER1 = 4;
+	private int MAX_ITER2 = 5;
+	private int MAX_ITER3 = 6;
+	private int MAX_ITER4 = 8;
 	
 	private int AIpx = 0;
 	private int AIpy = 0;
@@ -102,6 +106,20 @@ public class game {
 	}
 	
 	public void AIMakeMove() {
+		
+		int pieceNumber = 0;
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 9; j++) {
+				if(gameBoard[i][j] != 0) {
+					pieceNumber ++;
+				}
+			}
+		}
+		if(pieceNumber > 16) MAX_ITER = MAX_ITER1;
+		else if(pieceNumber > 10) MAX_ITER = MAX_ITER2;
+		else if(pieceNumber > 8) MAX_ITER = MAX_ITER3;
+		else MAX_ITER = MAX_ITER4;
+		
 		int v = maxValue(-100000, 100000, MAX_ITER);
 //		System.out.println(v);
 		
@@ -165,10 +183,12 @@ public class game {
 								if(isGameOver() != 0) {
 									
 									v = evaluation(gameBoard);
-									AIpx = j;
-									AIpy = i;
-									AItx = tx;
-									AIty = ty;
+									if(maxIteration == MAX_ITER) {
+										AIpx = j;
+										AIpy = i;
+										AItx = tx;
+										AIty = ty;
+									}
 									gameBoard[i][j] = gameBoard[ty][tx];
 									gameBoard[ty][tx] = temp;
 									return v;
