@@ -271,13 +271,6 @@ public class GUI extends JFrame implements ActionListener {
 		}).start();
 	}
 	
-	public void showWinner() {
-		if (currentGame.isGameOver() == 1)  
-		JOptionPane.showMessageDialog(null, "Red player has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
-		else if(currentGame.isGameOver()== -1)
-			JOptionPane.showMessageDialog(null, "Black player has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
-		//System.exit(0);
-    }
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
