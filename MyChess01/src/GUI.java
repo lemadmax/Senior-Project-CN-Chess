@@ -41,8 +41,8 @@ public class GUI extends JFrame implements ActionListener {
 	Canvas canvas;
 	game currentGame;
 	
-	int pieceSelected = 0;
-	int placePlaced = 0;
+	int pieceSelected = -1;
+	int placePlaced = -1;
 	boolean ifselectedAPiece = false;
 	boolean AIThinking = false;
 	
@@ -62,14 +62,14 @@ public class GUI extends JFrame implements ActionListener {
 						if(pieceId != 0) {
 							g.drawImage(piecesImg[pieceId], x, y, this);
 						}
-						if(pieceSelected != 0) {
+						if(pieceSelected != -1) {
 							int tx = (pieceSelected) % 9;
 							int ty = (pieceSelected) / 9;
 							tx = 24 + tx * 57;
 							ty = 24 + ty * 57;
 							g.drawImage(selectImg, tx, ty, this);
 						}
-						if(placePlaced != 0) {
+						if(placePlaced != -1) {
 							int tx = (placePlaced) % 9;
 							int ty = (placePlaced) / 9;
 							tx = 24 + tx * 57;
@@ -122,13 +122,9 @@ public class GUI extends JFrame implements ActionListener {
 								canvas.repaint(xx, yy, 57, 57);
 								if(currentGame.isGameOver() == 1) {
 									System.out.println("red win");
-									JOptionPane.showMessageDialog(null, "Red player has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
+									JOptionPane.showMessageDialog(null, "Red has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
 								}
 								AIMove();
-								if(currentGame.isGameOver() == -1) {
-									System.out.println("black win");
-									JOptionPane.showMessageDialog(null, "Black player has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
-								}
 							}
 							else if(currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
 								pieceSelected = tempy * 9 + tempx;
@@ -179,8 +175,8 @@ public class GUI extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				currentGame.start();
-				pieceSelected = 0;
-				placePlaced = 0;
+				pieceSelected = -1;
+				placePlaced = -1;
 				ifselectedAPiece = false;
 				AIThinking = false;
 				canvas.repaint();
@@ -255,7 +251,7 @@ public class GUI extends JFrame implements ActionListener {
 					e.printStackTrace();
 				}
 				currentGame.AIMakeMove();
-				AIThinking = false;
+				
 				pieceSelected = currentGame.getPieceSelected();
 				placePlaced = currentGame.getPlacePlaced();
 //				int px = pieceSelected % 9;
@@ -267,6 +263,11 @@ public class GUI extends JFrame implements ActionListener {
 //				tx = tx * 57 + 24;
 //				ty = ty * 57 + 24;
 				canvas.repaint();
+				if(currentGame.isGameOver() == -1) {
+					System.out.println("black win");
+					JOptionPane.showMessageDialog(null, "Black has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
+				}
+				AIThinking = false;
 			}
 		}).start();
 	}
