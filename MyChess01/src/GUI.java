@@ -19,6 +19,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.lang.model.element.Element;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class GUI extends JFrame implements ActionListener {
 
@@ -121,10 +122,12 @@ public class GUI extends JFrame implements ActionListener {
 								canvas.repaint(xx, yy, 57, 57);
 								if(currentGame.isGameOver() == 1) {
 									System.out.println("red win");
+									JOptionPane.showMessageDialog(null, "Red player has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
 								}
 								AIMove();
 								if(currentGame.isGameOver() == -1) {
 									System.out.println("black win");
+									JOptionPane.showMessageDialog(null, "Black player has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
 								}
 							}
 							else if(currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
@@ -171,6 +174,25 @@ public class GUI extends JFrame implements ActionListener {
 				System.exit(0);;
 			}
 		});
+		
+		itemStart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				currentGame.start();
+				pieceSelected = 0;
+				placePlaced = 0;
+				ifselectedAPiece = false;
+				AIThinking = false;
+				canvas.repaint();
+			}
+		});
+		
+		itemExit.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				System.exit(0);
+			}
+		});
+		
 		//java.net.URL url = Element.class.getResource("E:/workPlace/JavaWorkPlace/MyChess01/main.gif");
 		File filePath = new File("boards/main.gif");
 		//BoardImg = getToolkit().createImage(url);
@@ -248,6 +270,14 @@ public class GUI extends JFrame implements ActionListener {
 			}
 		}).start();
 	}
+	
+	public void showWinner() {
+		if (currentGame.isGameOver() == 1)  
+		JOptionPane.showMessageDialog(null, "Red player has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
+		else if(currentGame.isGameOver()== -1)
+			JOptionPane.showMessageDialog(null, "Black player has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
+		//System.exit(0);
+    }
 	
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
