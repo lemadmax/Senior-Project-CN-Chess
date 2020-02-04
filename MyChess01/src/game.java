@@ -24,12 +24,15 @@ public class game {
 	private int AItx = 0;
 	private int AIty = 0;
 	
+	//the value of every piece
 	private int pieceValue[] = {
 		1000, 50, 50, 55, 65, 60, 45	
 	};
+	//the option of moving pieces
 	private int pieceMoveOption[] = {
 			4, 4, 4, 8, 34, 34, 4
 	};
+	//x-coordinate 
 	private int pieceMovex[][] = {
 			{0, 0, 1, -1},
 			{1, 1, -1, -1},
@@ -39,6 +42,7 @@ public class game {
 			{1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 1, -1}
 	};
+	//y-coordinate 
 	private int pieceMovey[][] = {
 			{1, -1, 0, 0},
 			{1, -1, 1, -1},
@@ -52,7 +56,7 @@ public class game {
 	public game() {
 		
 	}
-	
+	//define the game board
 	public static final int defBoard[][] = {
 			{ 5,  4,  3,  2,  1,  2,  3,  4,  5},
 			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
@@ -91,20 +95,22 @@ public class game {
 //			{-5, -4, -3, -2, -1, -2, -3, -4, 0}
 //	};
 	
+	//the player selects a piece
 	public boolean selectPiece(int px, int py) {
 		if(gameBoard[py][px] < 0) {
 			return true;
 		}
 		else return false;
 	}
-	
+	//select pieces
 	public int getPieceSelected() {
 		return AIpy * 9 + AIpx;
 	}
+	//place pieces
 	public int getPlacePlaced() {
 		return AIty * 9 + AItx;
 	}
-	
+	//AI makes a move
 	public void AIMakeMove() {
 		
 		int pieceNumber = 0;
@@ -136,7 +142,7 @@ public class game {
 //			System.out.println();
 //		}
 	}
-	
+	//determine who wins
 	public int isGameOver() {
 		boolean bk = false;
 		boolean rk = false;
@@ -158,21 +164,33 @@ public class game {
 			}
 			if(rk) break;
 		}
+		//cannot find red king, black wins
 		if(rk == false) return -1;
+		//cannot find black king, red wins
 		else if(bk == false) return 1;
 		else return 0;
 	}
 	
+	//minimax algorithm 
 	private int maxValue(int alpha, int beta, int maxIteration) {
+		
+		//maxIteration is current depth, 0 represents bottom layer
+		//terminal means game is over
 		if(maxIteration == 0 || terminal(gameBoard)) return evaluation(gameBoard);
+		
+		//The optimal value of the current node
 		int v = -100000;
+		
+		//Traverse the game board
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
+				//traverse all solutions of AI 
 				if(gameBoard[i][j] > 0) {
 					for(int e = 0; e < pieceMoveOption[gameBoard[i][j] - 1]; e++) {
 						int tx = j + pieceMovex[gameBoard[i][j] - 1][e];
 						int ty = i + pieceMovey[gameBoard[i][j] - 1][e];
 						
+						//skip the invalid move
 						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
 						int temp = gameBoard[ty][tx];
 						if(gameBoard[ty][tx] <= 0) {
@@ -194,12 +212,15 @@ public class game {
 									return v;
 								}
 								
+								//tv: the heuristic value of the current game board returned by the next level 
+								//temporary value
 								int tv = minValue(alpha, beta, maxIteration - 1);
 								
 								gameBoard[i][j] = gameBoard[ty][tx];
 								gameBoard[ty][tx] = temp;
 								
 								//System.out.println("tv: " + tv);
+								//find the max value of the next level and assign it to v
 								if(tv > v) {
 									v = tv;
 									if(maxIteration == MAX_ITER) {
@@ -210,7 +231,9 @@ public class game {
 									}
 								}
 								
-								if(tv >= beta) return v;
+								//alpha beta pruning when the beta of the next layer less than or equal to alpha
+								if(v >= beta) return v;
+								//update alpha
 								if(tv > alpha) alpha = tv;
 							}
 						}
@@ -222,16 +245,22 @@ public class game {
 	}
 	
 	private int minValue(int alpha, int beta, int maxIteration) {
+		
+		//maxIteration is current depth, 0 represents bottom layer
+		//terminal means game is over
 		if(maxIteration == 0 || terminal(gameBoard)) return evaluation(gameBoard);
 		int v = 100000;
+		//Traverse the game board
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
+				//traverse all solutions of red pieces
 				if(gameBoard[i][j] < 0) {
 					for(int e = 0; e < pieceMoveOption[-gameBoard[i][j] - 1]; e++) {
 						
 						int tx = j + pieceMovex[-gameBoard[i][j] - 1][e];
 						int ty = i + pieceMovey[-gameBoard[i][j] - 1][e];
 						
+						//skip the invalid move
 						if(tx < 0 || tx > 8 || ty < 0 || ty > 9) continue;
 						int temp = gameBoard[ty][tx];
 						if(gameBoard[ty][tx] >= 0) {
@@ -251,8 +280,11 @@ public class game {
 								gameBoard[i][j] = gameBoard[ty][tx];
 								gameBoard[ty][tx] = temp;
 							
+								//find the min value of the next level and assign it to v
 								if(tv < v) v = tv;
-								if(tv <= alpha) return v;
+								//alpha beta pruning when the alpha of the next layer greater than or equal to v
+								if(v <= alpha) return v;
+								//update beta
 								if(tv < beta) beta = tv;
 							}
 						}
@@ -264,10 +296,14 @@ public class game {
 		return v;
 	}
 	
-	public int playerMove(int piece, int plx, int ply) {
+	
+	//player move a piece
+	public int playerMove(int piece, int plx, int ply) {//placed x, placed y
+		//the coordinate of the piece
 		int px = (piece) % 9;
 		int py = (piece) / 9;
-		if(gameBoard[ply][plx] >= 0) {
+		if(gameBoard[ply][plx] >= 0) { //black 
+			//check if this move is valid
 			if(checkMoveLegitimacy(-gameBoard[py][px], px, py, plx, ply)) {
 				gameBoard[ply][plx] = gameBoard[py][px];
 				gameBoard[py][px] = 0;
@@ -275,15 +311,18 @@ public class game {
 			}
 			else return 0;
 		}
-		else if(gameBoard[ply][plx] < 0) {
-			return 2;
+		else if(gameBoard[ply][plx] < 0) {//red
+			return 2;//change selected piece
 		}
 		else return 0;
 	}
 	
+	
+	//determine if game is over
 	private boolean terminal(int board[][]) {
 		int bk = 0;
 		int rk = 0;
+		//traverse the game board to find black king or red king
 		for(int i = 0 ; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
 				if(board[i][j] == 1) bk++;
@@ -291,10 +330,13 @@ public class game {
 				
 			}
 		}
-		if(bk == 1 && rk == 1) return false;
+		if(bk == 1 && rk == 1) return false; //find red king or black king
 		else return true;
 	}
 	
+	//check if general aligns
+	//The two Kings in the board must never be on the same file (vertical line) 
+	//without any pieces in between them.
 	private boolean checkIfGeneralAlign() {
 		
 		for(int i = 0; i < 3; i++) {
@@ -322,18 +364,20 @@ public class game {
 		return false;
 	}
 	
+	//check if pieces under attack
 	private boolean checkIfPieceUnderAtt(int p, int px, int py) {
+		//result: Attack coefficient 
 		int res = 0;
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
 				if((gameBoard[i][j] < 0 && p < 0) || (gameBoard[i][j] > 0 && p > 0)) {
 					if(checkMoveLegitimacy(Math.abs(gameBoard[i][j]), px, py, j, i)) {
-						res--;
+						res--; //not under attack
 					}
 				}
 				if((gameBoard[i][j] < 0 && p > 0) || (gameBoard[i][j] > 0 && p < 0)) {
 					if(checkMoveLegitimacy(Math.abs(gameBoard[i][j]), px, py, j, i)) {
-						res++;
+						res++;//under attack
 					}
 				}
 			}
@@ -346,6 +390,7 @@ public class game {
 		}
 	}
 	
+	//The situation analysis
 	private int evaluation(int board[][]) {
 		
 		int res = 0;
@@ -357,7 +402,10 @@ public class game {
 					
 					int currentPiece = Math.abs(board[i][j]);
 					int tempRes = 0;
-					if(currentPiece != 1) {
+					
+					//
+					if(currentPiece != 1) {//not king
+						//not under attack, the sum of piece value
 						if(!checkIfPieceUnderAtt(board[i][j], j, i)) {
 							tempRes += pieceValue[currentPiece - 1];
 						}
@@ -373,8 +421,9 @@ public class game {
 //						if(board[ty][tx] == 0) 
 //							tempRes += 1;
 //					}
-										
+					//black					
 					if(board[i][j] > 0) blackPower += tempRes;
+					//red
 					if(board[i][j] < 0) redPower += tempRes;
 				}
 			}
@@ -383,6 +432,7 @@ public class game {
 		return res;
 	}
 	
+	//check if a move is legitimacy 
 	private boolean checkMoveLegitimacy(int p, int px, int py, int tx, int ty) {
 		int temp = gameBoard[ty][tx];
 		gameBoard[ty][tx] = gameBoard[py][px];
@@ -395,16 +445,19 @@ public class game {
 		gameBoard[py][px] = gameBoard[ty][tx];
 		gameBoard[ty][tx] = temp;
 		switch(p) {
+		//the rule of moving the King
 		case 1:
 			if(Math.abs(tx - px) + Math.abs(ty - py) == 1 && tx >= 3 && tx <= 5 && ((ty >= 7 && ty <= 9) || (ty >= 0 && ty <= 2))) {
 				return true;
 			}
 			else return false;
+		//the rule of moving the Guard (Advisor)
 		case 2:
 			if(Math.abs(tx - px) == 1 && Math.abs(ty - py) == 1 && tx >= 3 && tx <= 5 && ((ty >= 7 && ty <= 9) || (ty >= 0 && ty <= 2))) {
 				return true;
 			}
 			else return false;
+		//the rule of moving the Minister(Elephants) 
 		case 3:
 			if(py <= 4) {
 				if(ty <= 4 && Math.abs(tx - px) == 2 && Math.abs(ty - py) == 2 && gameBoard[(ty - py) / 2 + py][(tx - px) / 2 + px] == 0) {
@@ -418,6 +471,7 @@ public class game {
 				}
 				else return false;
 			}
+		//the rule of moving the Knights(Horses)
 		case 4:
 			if(Math.abs(tx - px) == 2 && Math.abs(ty - py) == 1) {
 				if(gameBoard[py][(tx - px) / 2 + px] == 0) return true;
@@ -427,16 +481,17 @@ public class game {
 				if(gameBoard[(ty - py) / 2 + py][px] == 0) return true;
 				else return false;
 			}
+		//the rule of moving the Rooks(Cars)
 		case 5:
-			if(tx - px == 0) {
-				int st = Math.min(ty, py);
-				int en = Math.max(ty, py);
+			if(tx - px == 0) { //column
+				int st = Math.min(ty, py); //start
+				int en = Math.max(ty, py); //end
 				for(int i = st + 1; i < en; i++) {
 					if(gameBoard[i][px] != 0) return false;
 				}
 				return true;
 			}
-			else if(ty - py == 0) {
+			else if(ty - py == 0) { //row
 				int st = Math.min(tx, px);
 				int en = Math.max(tx, px);
 				for(int i = st + 1; i < en; i++) {
@@ -444,6 +499,7 @@ public class game {
 				}
 				return true;
 			}
+		//the rule of moving the Cannon
 		case 6:
 			if(gameBoard[ty][tx] == 0) {
 				if(tx - px == 0) {
@@ -487,6 +543,7 @@ public class game {
 					else return false;
 				}
 			}
+		//the rule of moving Pawns(or Soldiers)
 		case 7:
 			if(gameBoard[py][px] < 0) {
 				if(py >= 5) {
@@ -515,6 +572,7 @@ public class game {
 		return false;
 	}
 	
+	//start function
 	public void start() {
 		for(int i = 0; i < 10; i++)
 			for(int j = 0; j < 9; j++) {

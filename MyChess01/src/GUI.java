@@ -111,6 +111,9 @@ public class GUI extends JFrame implements ActionListener {
 								
 								canvas.repaint(xx, yy, 57, 57);
 							}
+							
+							
+						
 						}
 						else {
 							int sx = pieceSelected % 9;
@@ -125,12 +128,15 @@ public class GUI extends JFrame implements ActionListener {
 									JOptionPane.showMessageDialog(null, "Red has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
 								}
 								AIMove();
+								
 							}
 							else if(currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
 								pieceSelected = tempy * 9 + tempx;
 								canvas.repaint(xx, yy, 57, 57);
 							}
 							canvas.repaint(sx, sy, 57, 57);
+							
+							
 						}
 					}
 				}
