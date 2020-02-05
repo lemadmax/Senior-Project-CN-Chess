@@ -123,6 +123,7 @@ public class GUI extends JFrame implements ActionListener {
 							if(currentGame.playerMove(pieceSelected, tempx, tempy) == 1) {
 								placePlaced = tempy * 9 + tempx;
 								canvas.repaint(xx, yy, 57, 57);
+								ifselectedAPiece = false;
 								if(currentGame.isGameOver() == 1) {
 									System.out.println("red win");
 									JOptionPane.showMessageDialog(null, "Red has won!" , "Alpha-Bob 1.0", JOptionPane.INFORMATION_MESSAGE);
