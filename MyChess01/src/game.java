@@ -471,6 +471,7 @@ public class game {
 		}
 		gameBoard[py][px] = gameBoard[ty][tx];
 		gameBoard[ty][tx] = temp;
+		System.out.println("Piece: " + p);
 		switch(p) {
 		//the rule of moving the King
 		case 1:
@@ -508,6 +509,7 @@ public class game {
 				if(gameBoard[(ty - py) / 2 + py][px] == 0) return true;
 				else return false;
 			}
+			break;
 		//the rule of moving the Rooks(Cars)
 		case 5:
 			if(tx - px == 0) { //column
