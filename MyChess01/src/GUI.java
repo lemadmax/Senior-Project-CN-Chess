@@ -187,38 +187,44 @@ public class GUI extends JFrame implements ActionListener {
 							int sy = pieceSelected / 9;
 							sx = sx * 57 + 24;
 							sy = sy * 57 + 24;
-							if (currentGame.playerMove(pieceSelected, tempx, tempy) == 1) {
-								placePlaced = tempy * 9 + tempx;
-								canvas.repaint(xx, yy, 57, 57);
-								if (currentGame.isGameOver() == 1) {
-									System.out.println("red win");
-									JOptionPane.showMessageDialog(null, "Red has won!", "Alpha-Bob 1.0",
-											JOptionPane.INFORMATION_MESSAGE);
-								}
-								// AIMove();
-								red = true;
-								ifselectedAPiece = false;
 
-							} else if (currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
-								pieceSelected = tempy * 9 + tempx;
-								canvas.repaint(xx, yy, 57, 57);
+							if (!red) {
+								if (currentGame.playerMove(pieceSelected, tempx, tempy) == 1) {
+									placePlaced = tempy * 9 + tempx;
+									canvas.repaint(xx, yy, 57, 57);
+									if (currentGame.isGameOver() == 1) {
+										System.out.println("red win");
+										JOptionPane.showMessageDialog(null, "Red has won!", "Alpha-Bob 1.0",
+												JOptionPane.INFORMATION_MESSAGE);
+									}
+									// AIMove();
+									red = true;
+									ifselectedAPiece = false;
+
+								} else if (currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
+									pieceSelected = tempy * 9 + tempx;
+									canvas.repaint(xx, yy, 57, 57);
+								}
 							}
 
-							if (currentGame.playerMove2(pieceSelected, tempx, tempy) == 1) {
-								placePlaced = tempy * 9 + tempx;
-								canvas.repaint(xx, yy, 57, 57);
-								if (currentGame.isGameOver() == -1) {
-									System.out.println("black win");
-									JOptionPane.showMessageDialog(null, "Black has won!", "Alpha-Bob 1.0",
-											JOptionPane.INFORMATION_MESSAGE);
-								}
-								// AIMove();
-								ifselectedAPiece = false;
-								red = false;
+							else {
 
-							} else if (currentGame.playerMove2(pieceSelected, tempx, tempy) == 2) {
-								pieceSelected = tempy * 9 + tempx;
-								canvas.repaint(xx, yy, 57, 57);
+								if (currentGame.playerMove2(pieceSelected, tempx, tempy) == 1) {
+									placePlaced = tempy * 9 + tempx;
+									canvas.repaint(xx, yy, 57, 57);
+									if (currentGame.isGameOver() == -1) {
+										System.out.println("black win");
+										JOptionPane.showMessageDialog(null, "Black has won!", "Alpha-Bob 1.0",
+												JOptionPane.INFORMATION_MESSAGE);
+									}
+									// AIMove();
+									ifselectedAPiece = false;
+									red = false;
+
+								} else if (currentGame.playerMove2(pieceSelected, tempx, tempy) == 2) {
+									pieceSelected = tempy * 9 + tempx;
+									canvas.repaint(xx, yy, 57, 57);
+								}
 							}
 							canvas.repaint(sx, sy, 57, 57);
 							canvas.repaint();
