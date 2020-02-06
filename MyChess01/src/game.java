@@ -102,6 +102,16 @@ public class game {
 		}
 		else return false;
 	}
+	
+	public boolean selectPiece2(int px, int py) {
+		if(gameBoard[py][px] > 0) {
+			return true;
+		}else 
+			return false;
+	}
+	
+	
+	
 	//select pieces
 	public int getPieceSelected() {
 		return AIpy * 9 + AIpx;
@@ -313,6 +323,23 @@ public class game {
 		}
 		else if(gameBoard[ply][plx] < 0) {//red
 			return 2;//change selected piece
+		}
+		else return 0;
+	}
+	
+	public int playerMove2(int piece, int plx, int ply) {
+		int px = (piece) % 9;
+		int py = (piece) / 9;
+		if(gameBoard[ply][plx] <= 0) {
+			if(checkMoveLegitimacy(gameBoard[py][px], px, py, plx, ply)) {
+				gameBoard[ply][plx] = gameBoard[py][px];
+				gameBoard[py][px] = 0;
+				return 1;
+			}
+			else return 0;
+		}
+		else if(gameBoard[ply][plx] > 0) {
+			return 2;
 		}
 		else return 0;
 	}
