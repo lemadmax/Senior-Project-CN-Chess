@@ -471,7 +471,7 @@ public class game {
 		}
 		gameBoard[py][px] = gameBoard[ty][tx];
 		gameBoard[ty][tx] = temp;
-		System.out.println("Piece: " + p);
+		//System.out.println("Piece: " + p);
 		switch(p) {
 		//the rule of moving the King
 		case 1:
