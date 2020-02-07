@@ -1,38 +1,52 @@
+/*
+ * Game class
+ * 		1. Keep track on the game situation (record game board distribution)
+ * 		2. Implement different game mode
+ * 		3. Embed game rules
+ * 		4. Implement AI algorithm
+ * */
 
 public class game {
 	
 	/*
-	 * 1: jiang
-	 * 2: shi
-	 * 3: xiang
-	 * 4: ma
-	 * 5: che
-	 * 6: pao
-	 * 7: bing
+	 * 1: King		Jiang
+	 * 2: Guard		Shi
+	 * 3: Minister	Xiang
+	 * 4: Knight	Ma
+	 * 5: Rook		Che
+	 * 6: Cannon	Pao
+	 * 7: Pawn		Bing
+	 * (negative represents red side
+	 * positive represents black side)
 	 * */
-//	piece blackRemain[] = new piece[16];
-//	piece redRemain[] = new piece[16];
 	
+	// Define minimax search depth
+	// Graduately increase depth as fewer
+	// pieces remain on the board
 	private int MAX_ITER = 4;
 	private int MAX_ITER1 = 4;
 	private int MAX_ITER2 = 5;
 	private int MAX_ITER3 = 6;
 	private int MAX_ITER4 = 8;
 	
-	private int AIpx = 0;
-	private int AIpy = 0;
-	private int AItx = 0;
-	private int AIty = 0;
+	private int AIpx = 0; 	// AI selected piece x
+	private int AIpy = 0;	// y
+	private int AItx = 0;	// AI place placed x
+	private int AIty = 0;	// y
 	
-	//the value of every piece
+	// the value of each piece
+	// used to evaluate a situation
+	// King has the greatest value, 
+	// (index + 1) represent each piece, given at the beginning
 	private int pieceValue[] = {
 		1000, 50, 50, 55, 65, 60, 45	
 	};
-	//the option of moving pieces
+	// The number of a piece's move options
 	private int pieceMoveOption[] = {
 			4, 4, 4, 8, 34, 34, 4
 	};
-	//x-coordinate 
+	
+	// possible move directions and distances
 	private int pieceMovex[][] = {
 			{0, 0, 1, -1},
 			{1, 1, -1, -1},
@@ -42,7 +56,6 @@ public class game {
 			{1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 			{0, 0, 1, -1}
 	};
-	//y-coordinate 
 	private int pieceMovey[][] = {
 			{1, -1, 0, 0},
 			{1, -1, 1, -1},
@@ -53,10 +66,13 @@ public class game {
 			{1, -1, 0, 0}
 	};
 	
+	// constructor
 	public game() {
 		
 	}
-	//define the game board
+	
+	// default game board
+	// the start condition of the game board
 	public static final int defBoard[][] = {
 			{ 5,  4,  3,  2,  1,  2,  3,  4,  5},
 			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
@@ -81,28 +97,17 @@ public class game {
 			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
 			{-5, -4, -3, -2, -1, -2, -3, -4, -5}
 	};
+
 	
-//	public int gameBoard[][] = {
-//			{ 0,  0,  3,  2,  1,  2,  3,  4,  5},
-//			{ 0,  0,  0,  0,  -5,  0,  0,  0,  0},
-//			{ 0,  6,  0,  0,  0,  0,  0,  6,  0},
-//			{ 7,  0,  7,  0,  7,  0,  7,  0,  7},
-//			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
-//			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
-//			{-7,  0, -7,  0, -7,  0, -7,  0, -7},
-//			{ 0, -6,  0,  0,  0,  0,  0, -6,  0},
-//			{ 0,  0,  0,  0,  5,  0,  0,  0,  0},
-//			{-5, -4, -3, -2, -1, -2, -3, -4, 0}
-//	};
-	
-	//the player selects a piece
+	// red side selects a piece
+	// (px, py) is the coordinate of the clicked piece
 	public boolean selectPiece(int px, int py) {
 		if(gameBoard[py][px] < 0) {
 			return true;
 		}
 		else return false;
 	}
-	
+	// black side selects a piece
 	public boolean selectPiece2(int px, int py) {
 		if(gameBoard[py][px] > 0) {
 			return true;
@@ -112,17 +117,18 @@ public class game {
 	
 	
 	
-	//select pieces
+	// select pieces
 	public int getPieceSelected() {
 		return AIpy * 9 + AIpx;
 	}
-	//place pieces
+	// place pieces
 	public int getPlacePlaced() {
 		return AIty * 9 + AItx;
 	}
 	//AI makes a move
 	public void AIMakeMove() {
 		
+		// calculate search depth
 		int pieceNumber = 0;
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
@@ -137,20 +143,11 @@ public class game {
 		else MAX_ITER = MAX_ITER4;
 		
 		int v = maxValue(-100000, 100000, MAX_ITER);
-//		System.out.println(v);
 		
-//		System.out.println(AItx + " " + AIty);
-//		System.out.println(AIpx + " " + AIpy);
-		
+		// refresh game board
 		gameBoard[AIty][AItx] = gameBoard[AIpy][AIpx];
 		gameBoard[AIpy][AIpx] = 0;
 		System.out.println("current: " + evaluation(gameBoard));
-//		for(int i = 0; i < 10; i++) {
-//			for(int j = 0; j < 9; j++) {
-//				System.out.print(gameBoard[i][j] + "\t");
-//			}
-//			System.out.println();
-//		}
 	}
 	//determine who wins
 	public int isGameOver() {
@@ -174,9 +171,9 @@ public class game {
 			}
 			if(rk) break;
 		}
-		//cannot find red king, black wins
+		// cannot find red king, black wins
 		if(rk == false) return -1;
-		//cannot find black king, red wins
+		// cannot find black king, red wins
 		else if(bk == false) return 1;
 		else return 0;
 	}
@@ -307,7 +304,7 @@ public class game {
 	}
 	
 	
-	//player move a piece
+	// red side move a piece
 	public int playerMove(int piece, int plx, int ply) {//placed x, placed y
 		//the coordinate of the piece
 		int px = (piece) % 9;
@@ -361,9 +358,9 @@ public class game {
 		else return true;
 	}
 	
-	//check if general aligns
-	//The two Kings in the board must never be on the same file (vertical line) 
-	//without any pieces in between them.
+	// check if general aligns
+	// The two Kings in the board must never be on the same file (vertical line) 
+	// without any pieces in between them.
 	private boolean checkIfGeneralAlign() {
 		
 		for(int i = 0; i < 3; i++) {
@@ -391,7 +388,7 @@ public class game {
 		return false;
 	}
 	
-	//check if pieces under attack
+	// check if pieces under attack
 	private boolean checkIfPieceUnderAtt(int p, int px, int py) {
 		//result: Attack coefficient 
 		int res = 0;
@@ -417,7 +414,7 @@ public class game {
 		}
 	}
 	
-	//The situation analysis
+	// The situation analysis
 	private int evaluation(int board[][]) {
 		
 		int res = 0;
