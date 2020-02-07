@@ -28,7 +28,8 @@ public class GUI extends JFrame implements ActionListener {
 
 	Image BoardImg;
 	Image piecesImg[] = new Image[15];
-	Image selectImg;
+	Image selectImgr;
+	Image selectImgb;
 
 	Container container;
 	Menu menu;
@@ -39,8 +40,14 @@ public class GUI extends JFrame implements ActionListener {
 	Canvas canvas;
 	game currentGame;
 
-	int pieceSelected = -1;
-	int placePlaced = -1;
+	int rpieceSelected = -1;
+	int rplacePlaced = -1;
+	int bpieceSelected = -1;
+	int bplacePlaced = -1;
+	int preRPieceSelectedx = 0, preRPieceSelectedy = 0;
+	int preRPlacePlacedx = 0, preRPlacePlacedy = 0;
+	int preBPieceSelectedx = 0, preBPieceSelectedy = 0;
+	int preBPlacePlacedx = 0, preBPlacePlacedy = 0;
 	boolean ifselectedAPiece = false;
 	boolean AIThinking = false;
 	boolean red = false;
@@ -64,19 +71,33 @@ public class GUI extends JFrame implements ActionListener {
 						if (pieceId != 0) {
 							g.drawImage(piecesImg[pieceId], x, y, this);
 						}
-						if (pieceSelected != -1) {
-							int tx = (pieceSelected) % 9;
-							int ty = (pieceSelected) / 9;
+						if (rpieceSelected != -1) {
+							int tx = (rpieceSelected) % 9;
+							int ty = (rpieceSelected) / 9;
 							tx = 24 + tx * 57;
 							ty = 24 + ty * 57;
-							g.drawImage(selectImg, tx, ty, this);
+							g.drawImage(selectImgr, tx, ty, this);
 						}
-						if (placePlaced != -1) {
-							int tx = (placePlaced) % 9;
-							int ty = (placePlaced) / 9;
+						if (rplacePlaced != -1) {
+							int tx = (rplacePlaced) % 9;
+							int ty = (rplacePlaced) / 9;
 							tx = 24 + tx * 57;
 							ty = 24 + ty * 57;
-							g.drawImage(selectImg, tx, ty, this);
+							g.drawImage(selectImgr, tx, ty, this);
+						}
+						if (bpieceSelected != -1) {
+							int tx = (bpieceSelected) % 9;
+							int ty = (bpieceSelected) / 9;
+							tx = 24 + tx * 57;
+							ty = 24 + ty * 57;
+							g.drawImage(selectImgb, tx, ty, this);
+						}
+						if (bplacePlaced != -1) {
+							int tx = (bplacePlaced) % 9;
+							int ty = (bplacePlaced) / 9;
+							tx = 24 + tx * 57;
+							ty = 24 + ty * 57;
+							g.drawImage(selectImgb, tx, ty, this);
 						}
 					}
 				}
@@ -167,30 +188,41 @@ public class GUI extends JFrame implements ActionListener {
 						if (!ifselectedAPiece) {
 							if (!red) {
 								if (currentGame.selectPiece(tempx, tempy)) {
-									pieceSelected = tempy * 9 + tempx;
+									rpieceSelected = -1;
 									ifselectedAPiece = true;
-
+									canvas.repaint(preRPieceSelectedx, preRPieceSelectedy, 57, 57);
+									canvas.repaint(preRPlacePlacedx, preRPlacePlacedy, 57, 57);
+									rpieceSelected = tempy * 9 + tempx;
+									preRPieceSelectedx = tempx;
+									preRPieceSelectedy = tempy;
 									canvas.repaint(xx, yy, 57, 57);
 								}
 
 							} else {
 								if (currentGame.selectPiece2(tempx, tempy)) {
-									pieceSelected = tempy * 9 + tempx;
+									bpieceSelected = -1;
 									ifselectedAPiece = true;
-
+									canvas.repaint(preBPieceSelectedx, preBPieceSelectedy, 57, 57);
+									canvas.repaint(preBPlacePlacedx, preBPlacePlacedy, 57, 57);
+									bpieceSelected = tempy * 9 + tempx;
+									preBPieceSelectedx = tempx;
+									preBPieceSelectedy = tempy;
 									canvas.repaint(xx, yy, 57, 57);
 								}
 							}
 
 						} else {
-							int sx = pieceSelected % 9;
-							int sy = pieceSelected / 9;
-							sx = sx * 57 + 24;
-							sy = sy * 57 + 24;
+							
 
 							if (!red) {
-								if (currentGame.playerMove(pieceSelected, tempx, tempy) == 1) {
-									placePlaced = tempy * 9 + tempx;
+								int sx = rpieceSelected % 9;
+								int sy = rpieceSelected / 9;
+								sx = sx * 57 + 24;
+								sy = sy * 57 + 24;
+								if (currentGame.playerMove(rpieceSelected, tempx, tempy) == 1) {
+									rplacePlaced = tempy * 9 + tempx;
+									preRPlacePlacedx = tempx;
+									preRPlacePlacedy = tempy;
 									canvas.repaint(xx, yy, 57, 57);
 									if (currentGame.isGameOver() == 1) {
 										System.out.println("red win");
@@ -201,16 +233,22 @@ public class GUI extends JFrame implements ActionListener {
 									red = true;
 									ifselectedAPiece = false;
 
-								} else if (currentGame.playerMove(pieceSelected, tempx, tempy) == 2) {
-									pieceSelected = tempy * 9 + tempx;
+								} else if (currentGame.playerMove(rpieceSelected, tempx, tempy) == 2) {
+									rpieceSelected = tempy * 9 + tempx;
 									canvas.repaint(xx, yy, 57, 57);
 								}
+								canvas.repaint(sx, sy, 57, 57);
 							}
 
 							else {
-
-								if (currentGame.playerMove2(pieceSelected, tempx, tempy) == 1) {
-									placePlaced = tempy * 9 + tempx;
+								int sx = bpieceSelected % 9;
+								int sy = bpieceSelected / 9;
+								sx = sx * 57 + 24;
+								sy = sy * 57 + 24;
+								preBPlacePlacedx = tempx;
+								preBPlacePlacedy = tempy;
+								if (currentGame.playerMove2(bpieceSelected, tempx, tempy) == 1) {
+									bplacePlaced = tempy * 9 + tempx;
 									canvas.repaint(xx, yy, 57, 57);
 									if (currentGame.isGameOver() == -1) {
 										System.out.println("black win");
@@ -221,13 +259,14 @@ public class GUI extends JFrame implements ActionListener {
 									ifselectedAPiece = false;
 									red = false;
 
-								} else if (currentGame.playerMove2(pieceSelected, tempx, tempy) == 2) {
-									pieceSelected = tempy * 9 + tempx;
+								} else if (currentGame.playerMove2(bpieceSelected, tempx, tempy) == 2) {
+									bpieceSelected = tempy * 9 + tempx;
 									canvas.repaint(xx, yy, 57, 57);
 								}
+								canvas.repaint(sx, sy, 57, 57);
 							}
-							canvas.repaint(sx, sy, 57, 57);
-							canvas.repaint();
+							
+							//canvas.repaint();
 
 						}
 					}
@@ -274,8 +313,10 @@ public class GUI extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				currentGame.start();
-				pieceSelected = -1;
-				placePlaced = -1;
+				rpieceSelected = -1;
+				rplacePlaced = -1;
+				bpieceSelected = -1;
+				bplacePlaced = -1;
 				ifselectedAPiece = false;
 				AIThinking = false;
 				canvas.repaint();
@@ -332,8 +373,15 @@ public class GUI extends JFrame implements ActionListener {
 			}
 		}
 		File imgFile = new File(path + pieces_name[0] + ".gif");
+		File imgFileb = new File(path + "boos.gif");
 		try {
-			selectImg = ImageIO.read(imgFile);
+			selectImgr = ImageIO.read(imgFile);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			selectImgb = ImageIO.read(imgFileb);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -352,8 +400,8 @@ public class GUI extends JFrame implements ActionListener {
 				}
 				currentGame.AIMakeMove();
 
-				pieceSelected = currentGame.getPieceSelected();
-				placePlaced = currentGame.getPlacePlaced();
+				rpieceSelected = currentGame.getPieceSelected();
+				rplacePlaced = currentGame.getPlacePlaced();
 //				int px = pieceSelected % 9;
 //				int py = pieceSelected / 9;
 //				int tx = placePlaced % 9;
