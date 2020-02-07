@@ -189,24 +189,26 @@ public class GUI extends JFrame implements ActionListener {
 							if (!red) {
 								if (currentGame.selectPiece(tempx, tempy)) {
 									rpieceSelected = -1;
+									rplacePlaced = -1;
 									ifselectedAPiece = true;
 									canvas.repaint(preRPieceSelectedx, preRPieceSelectedy, 57, 57);
 									canvas.repaint(preRPlacePlacedx, preRPlacePlacedy, 57, 57);
 									rpieceSelected = tempy * 9 + tempx;
-									preRPieceSelectedx = tempx;
-									preRPieceSelectedy = tempy;
+									preRPieceSelectedx = xx;
+									preRPieceSelectedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
 								}
 
 							} else {
 								if (currentGame.selectPiece2(tempx, tempy)) {
 									bpieceSelected = -1;
+									bplacePlaced = -1;
 									ifselectedAPiece = true;
 									canvas.repaint(preBPieceSelectedx, preBPieceSelectedy, 57, 57);
 									canvas.repaint(preBPlacePlacedx, preBPlacePlacedy, 57, 57);
 									bpieceSelected = tempy * 9 + tempx;
-									preBPieceSelectedx = tempx;
-									preBPieceSelectedy = tempy;
+									preBPieceSelectedx = xx;
+									preBPieceSelectedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
 								}
 							}
@@ -221,8 +223,8 @@ public class GUI extends JFrame implements ActionListener {
 								sy = sy * 57 + 24;
 								if (currentGame.playerMove(rpieceSelected, tempx, tempy) == 1) {
 									rplacePlaced = tempy * 9 + tempx;
-									preRPlacePlacedx = tempx;
-									preRPlacePlacedy = tempy;
+									preRPlacePlacedx = xx;
+									preRPlacePlacedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
 									if (currentGame.isGameOver() == 1) {
 										System.out.println("red win");
@@ -245,10 +247,11 @@ public class GUI extends JFrame implements ActionListener {
 								int sy = bpieceSelected / 9;
 								sx = sx * 57 + 24;
 								sy = sy * 57 + 24;
-								preBPlacePlacedx = tempx;
-								preBPlacePlacedy = tempy;
+								
 								if (currentGame.playerMove2(bpieceSelected, tempx, tempy) == 1) {
 									bplacePlaced = tempy * 9 + tempx;
+									preBPlacePlacedx = xx;
+									preBPlacePlacedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
 									if (currentGame.isGameOver() == -1) {
 										System.out.println("black win");
