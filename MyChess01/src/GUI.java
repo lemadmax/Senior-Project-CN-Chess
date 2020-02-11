@@ -44,6 +44,7 @@ public class GUI extends JFrame implements ActionListener {
 	Image piecesImg[] = new Image[15];	// Image array that stores the Piece pictures
 	Image selectImgr;					// Blue square
 	Image selectImgb;					// Red square
+	Image avaPlaceImg;
 
 	/**********************
 	 * start: GUI frame
@@ -67,6 +68,19 @@ public class GUI extends JFrame implements ActionListener {
 	int rplacePlaced = -1;			// record the place red side placed a piece
 	int bpieceSelected = -1;		// black side selected piece
 	int bplacePlaced = -1;			// black side placed position
+	
+	int avaPlaces[][] = {
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
+			{ 0,  0,  0,  0,  0,  0,  0,  0,  0}
+	};
 
 	/*
 	 * record the moves of the previous
@@ -118,6 +132,9 @@ public class GUI extends JFrame implements ActionListener {
 							pieceId = 0;
 						if (pieceId != 0) {
 							g.drawImage(piecesImg[pieceId], x, y, this);
+						}
+						if(avaPlaces[i][j] == 1) {
+							g.drawImage(avaPlaceImg, x, y, this);
 						}
 						if (rpieceSelected != -1) {
 							int tx = (rpieceSelected) % 9;
@@ -196,6 +213,7 @@ public class GUI extends JFrame implements ActionListener {
 									preRPieceSelectedx = xx;
 									preRPieceSelectedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
+									checkAvaPlaces(tempx, tempy);
 								}
 							} else {
 								if (currentGame.selectPiece2(tempx, tempy)) {
@@ -208,6 +226,7 @@ public class GUI extends JFrame implements ActionListener {
 									preBPieceSelectedx = xx;
 									preBPieceSelectedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
+									checkAvaPlaces(tempx, tempy);
 								}
 							}
 
@@ -222,6 +241,7 @@ public class GUI extends JFrame implements ActionListener {
 									preRPlacePlacedx = xx;
 									preRPlacePlacedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
+									clearAvaPlaces();
 									if (currentGame.isGameOver() == 1) {
 										System.out.println("red win");
 										JOptionPane.showMessageDialog(null, "Red has won!", "Alpha-Bob 1.0",
@@ -234,6 +254,8 @@ public class GUI extends JFrame implements ActionListener {
 								} else if (currentGame.playerMove(rpieceSelected, tempx, tempy) == 2) {
 									rpieceSelected = tempy * 9 + tempx;
 									canvas.repaint(xx, yy, 57, 57);
+									clearAvaPlaces();
+									checkAvaPlaces(tempx, tempy);
 								}
 								canvas.repaint(sx, sy, 57, 57);
 							}
@@ -249,6 +271,7 @@ public class GUI extends JFrame implements ActionListener {
 									preBPlacePlacedx = xx;
 									preBPlacePlacedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
+									clearAvaPlaces();
 									if (currentGame.isGameOver() == -1) {
 										System.out.println("black win");
 										JOptionPane.showMessageDialog(null, "Black has won!", "Alpha-Bob 1.0",
@@ -260,6 +283,8 @@ public class GUI extends JFrame implements ActionListener {
 								} else if (currentGame.playerMove2(bpieceSelected, tempx, tempy) == 2) {
 									bpieceSelected = tempy * 9 + tempx;
 									canvas.repaint(xx, yy, 57, 57);
+									clearAvaPlaces();
+									checkAvaPlaces(tempx, tempy);
 								}
 								canvas.repaint(sx, sy, 57, 57);
 							}
@@ -287,6 +312,7 @@ public class GUI extends JFrame implements ActionListener {
 									preRPieceSelectedx = xx;
 									preRPieceSelectedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
+									checkAvaPlaces(tempx, tempy);
 								}
 							}
 							else {
@@ -300,6 +326,7 @@ public class GUI extends JFrame implements ActionListener {
 									preRPlacePlacedx = xx;
 									preRPlacePlacedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
+									clearAvaPlaces();
 									if (currentGame.isGameOver() == 1) {
 										System.out.println("red win");
 										JOptionPane.showMessageDialog(null, "Red has won!", "Alpha-Bob 1.0",
@@ -310,6 +337,8 @@ public class GUI extends JFrame implements ActionListener {
 								} else if (currentGame.playerMove(rpieceSelected, tempx, tempy) == 2) {
 									rpieceSelected = tempy * 9 + tempx;
 									canvas.repaint(xx, yy, 57, 57);
+									clearAvaPlaces();
+									checkAvaPlaces(tempx, tempy);
 								}
 								canvas.repaint(sx, sy, 57, 57);
 							}
@@ -383,6 +412,7 @@ public class GUI extends JFrame implements ActionListener {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				currentGame.start();
+				clearAvaPlaces();
 				rpieceSelected = -1;
 				rplacePlaced = -1;
 				bpieceSelected = -1;
@@ -456,6 +486,36 @@ public class GUI extends JFrame implements ActionListener {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		File imgAva = new File(path + "avp.gif");
+		try {
+			avaPlaceImg = ImageIO.read(imgAva);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	private void checkAvaPlaces(int px, int py) {
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 9; j++) {
+				boolean flag = currentGame.checkMoveLegitimacy(Math.abs(currentGame.gameBoard[py][px]), px, py, j, i);
+				if(flag && currentGame.gameBoard[i][j] == 0) {
+					avaPlaces[i][j] = 1;
+					canvas.repaint(j * 57 + 24, i * 57 + 24, 57, 57);
+				}
+			}
+		}
+	}
+	
+	private void clearAvaPlaces() {
+		for(int i =0 ; i < 10; i++) {
+			for(int j =0 ; j < 9; j++) {
+				if(avaPlaces[i][j] == 1) {
+					avaPlaces[i][j] = 0;
+					canvas.repaint(j * 57 + 24, i * 57 + 24, 57, 57);
+				}
+			}
 		}
 	}
 

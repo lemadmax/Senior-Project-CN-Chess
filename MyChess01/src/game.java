@@ -457,7 +457,7 @@ public class game {
 	}
 	
 	//check if a move is legitimacy 
-	private boolean checkMoveLegitimacy(int p, int px, int py, int tx, int ty) {
+	public boolean checkMoveLegitimacy(int p, int px, int py, int tx, int ty) {
 		int temp = gameBoard[ty][tx];
 		gameBoard[ty][tx] = gameBoard[py][px];
 		gameBoard[py][px] = 0;
