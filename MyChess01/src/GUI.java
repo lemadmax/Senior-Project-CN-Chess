@@ -500,7 +500,7 @@ public class GUI extends JFrame implements ActionListener {
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 9; j++) {
 				boolean flag = currentGame.checkMoveLegitimacy(Math.abs(currentGame.gameBoard[py][px]), px, py, j, i);
-				if(flag && currentGame.gameBoard[i][j] == 0) {
+				if(flag && ((currentGame.gameBoard[i][j] >= 0 && currentGame.gameBoard[py][px] <= 0) || (currentGame.gameBoard[i][j] <= 0 && currentGame.gameBoard[py][px] >= 0))) {
 					avaPlaces[i][j] = 1;
 					canvas.repaint(j * 57 + 24, i * 57 + 24, 57, 57);
 				}
