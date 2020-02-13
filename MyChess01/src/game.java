@@ -66,6 +66,9 @@ public class game {
 			{1, -1, 0, 0}
 	};
 	
+	public int[][][] boardsave = new int [100][10][9];  //used to save current gameboard
+	public int step  = 0;								//used to save how many steps
+	
 	// constructor
 	public game() {
 		
@@ -340,6 +343,26 @@ public class game {
 		}
 		else return 0;
 	}
+	
+	//save the current gameboard
+		public void saveGameboard(int step) { 
+				for(int i = 0; i < 10; i++) {
+					for(int j = 0; j< 9; j++) {
+						boardsave[step][i][j] = gameBoard[i][j];
+					}
+				}
+		}
+		
+		//regret movement for Player vs. Player
+		public void regretMove() {
+			for(int i = 0; i<10; i++) {
+				for(int j = 0; j<9; j++) {
+					
+					gameBoard[i][j] = boardsave[step -2][i][j];
+				}			
+			}
+			step = step - 2;
+		}
 	
 	
 	//determine if game is over

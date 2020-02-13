@@ -55,6 +55,7 @@ public class GUI extends JFrame implements ActionListener {
 	MenuBar bar;
 	MenuItem itemStart;
 	MenuItem itemExit;
+	MenuItem itemRegret;
 	MenuItem Player_vs_Player,Player_vs_AI, Help;
 
 	Canvas canvas;
@@ -241,6 +242,9 @@ public class GUI extends JFrame implements ActionListener {
 									preRPlacePlacedx = xx;
 									preRPlacePlacedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
+									currentGame.step++;
+									currentGame.saveGameboard(currentGame.step);
+									System.out.println("step: "+currentGame.step);
 									clearAvaPlaces();
 									if (currentGame.isGameOver() == 1) {
 										System.out.println("red win");
@@ -271,6 +275,9 @@ public class GUI extends JFrame implements ActionListener {
 									preBPlacePlacedx = xx;
 									preBPlacePlacedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
+									currentGame.step++;
+									currentGame.saveGameboard(currentGame.step);
+									System.out.println("step: "+currentGame.step);
 									clearAvaPlaces();
 									if (currentGame.isGameOver() == -1) {
 										System.out.println("black win");
@@ -326,6 +333,9 @@ public class GUI extends JFrame implements ActionListener {
 									preRPlacePlacedx = xx;
 									preRPlacePlacedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
+									currentGame.step++;
+									currentGame.saveGameboard(currentGame.step);
+									System.out.println("step: "+currentGame.step);
 									clearAvaPlaces();
 									if (currentGame.isGameOver() == 1) {
 										System.out.println("red win");
@@ -368,9 +378,11 @@ public class GUI extends JFrame implements ActionListener {
 		setMenuBar(bar);
 		itemStart = new MenuItem("start");
 		itemExit = new MenuItem("exit");
+		itemRegret = new MenuItem("regret");
 
 		menu.add(itemStart);
 		menu.add(itemExit);
+		menu.add(itemRegret);
 		GameMode =new Menu("GameMode");
 		help =new Menu ("Help");
 		bar.add(GameMode);
@@ -429,6 +441,25 @@ public class GUI extends JFrame implements ActionListener {
 			public void actionPerformed(ActionEvent e) {
 				System.exit(0);
 			}
+		});
+		
+		itemRegret.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+
+				currentGame.regretMove();
+
+
+				canvas.repaint();
+				currentGame.saveGameboard(currentGame.step);
+				System.out.println("regret move");
+
+			}
+
+
+
 		});
 
 		// load images
@@ -554,6 +585,9 @@ public class GUI extends JFrame implements ActionListener {
 				//				canvas.repaint(px, py, 57, 57);
 				//				canvas.repaint(tx, ty, 57, 57);
 				canvas.repaint();
+				currentGame.step++;
+				currentGame.saveGameboard(currentGame.step);
+				System.out.println("step: "+currentGame.step);
 				if (currentGame.isGameOver() == -1) {
 					System.out.println("black win");
 					JOptionPane.showMessageDialog(null, "Black has won!", "Alpha-Bob 1.0",
