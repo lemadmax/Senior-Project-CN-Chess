@@ -29,6 +29,26 @@ import javax.imageio.ImageIO;
 import javax.lang.model.element.Element;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
+
+import java.awt.Color;
+
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JTextField;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+
+import java.awt.Font;
+import javax.swing.SwingConstants;
+import javax.swing.JTextArea;
+import javax.swing.JScrollPane;
 
 public class GUI extends JFrame implements ActionListener {
 
@@ -51,7 +71,7 @@ public class GUI extends JFrame implements ActionListener {
 	 * *******************/
 
 	Container container;				
-	Menu menu,GameMode,help;
+	Menu menu,GameMode;
 	MenuBar bar;
 	MenuItem itemStart;
 	MenuItem itemExit;
@@ -69,6 +89,7 @@ public class GUI extends JFrame implements ActionListener {
 	int rplacePlaced = -1;			// record the place red side placed a piece
 	int bpieceSelected = -1;		// black side selected piece
 	int bplacePlaced = -1;			// black side placed position
+	int buttonValue =0;
 	
 	int avaPlaces[][] = {
 			{ 0,  0,  0,  0,  0,  0,  0,  0,  0},
@@ -104,7 +125,11 @@ public class GUI extends JFrame implements ActionListener {
 	boolean AIThinking = false;			// check if AI is thinking
 	boolean red = false;				// check which side is moving
 	int gameMode = 1;					// 1 stands for player vs. player; 2 stands for player vs. AI
-
+	//private JTextField txtCaptureWhenA;
+	private JTextArea txtrCaptureWhenA2;
+	String piecePath="wood/";
+	String filePath2 = "main";
+    boolean tips= false;
 	// constructor
 	public GUI(String title) {
 		currentGame = new game();	// initiate game object
@@ -181,6 +206,25 @@ public class GUI extends JFrame implements ActionListener {
 		container = getContentPane();
 		container.setLayout(null);
 
+		canvas.setBounds(0, 0, 558, 620);
+		getContentPane().add(canvas);
+		
+		JPanel panel = new JPanel();
+		panel.setBackground(Color.WHITE);
+		panel.setBounds(566, 0, 607, 620);
+		getContentPane().add(panel);
+		panel.setLayout(null);
+		
+		JPanel panel_1 = new JPanel();
+		panel_1.setBackground(Color.WHITE);
+		panel_1.setBounds(0, 0, 607, 43);
+		panel.add(panel_1);
+		panel_1.setLayout(null);
+		
+		JCheckBox chckbxMoveTips = new JCheckBox("Move Tips");
+		chckbxMoveTips.setBounds(479, 8, 99, 23);
+		panel_1.add(chckbxMoveTips);
+		
 		canvas.addMouseListener(new MouseListener() {
 			public void mouseClicked(MouseEvent mouseevent) {
 
@@ -191,6 +235,11 @@ public class GUI extends JFrame implements ActionListener {
 				// TODO Auto-generated method stub
 				// gameNode = 1, player vs. player
 				if(gameMode == 1) {
+					if(chckbxMoveTips.isSelected()) {
+					    tips =true ;}
+					else {
+						tips=false;
+					}
 					int x = e.getX();
 					int y = e.getY();
 					if (x >= 24 && x <= 530 && y >= 24 && y <= 596) {
@@ -214,7 +263,8 @@ public class GUI extends JFrame implements ActionListener {
 									preRPieceSelectedx = xx;
 									preRPieceSelectedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
-									checkAvaPlaces(tempx, tempy);
+									if(tips) {
+									checkAvaPlaces(tempx, tempy);}
 								}
 							} else {
 								if (currentGame.selectPiece2(tempx, tempy)) {
@@ -227,7 +277,8 @@ public class GUI extends JFrame implements ActionListener {
 									preBPieceSelectedx = xx;
 									preBPieceSelectedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
-									checkAvaPlaces(tempx, tempy);
+									if(tips) {
+									checkAvaPlaces(tempx, tempy);}
 								}
 							}
 
@@ -248,7 +299,7 @@ public class GUI extends JFrame implements ActionListener {
 									clearAvaPlaces();
 									if (currentGame.isGameOver() == 1) {
 										System.out.println("red win");
-										JOptionPane.showMessageDialog(null, "Red has won!", "Alpha-Bob 1.0",
+										JOptionPane.showMessageDialog(null, "Red has won!", "Alpha-Bob 2.7",
 												JOptionPane.INFORMATION_MESSAGE);
 									}
 									// AIMove();
@@ -259,7 +310,8 @@ public class GUI extends JFrame implements ActionListener {
 									rpieceSelected = tempy * 9 + tempx;
 									canvas.repaint(xx, yy, 57, 57);
 									clearAvaPlaces();
-									checkAvaPlaces(tempx, tempy);
+									if(tips) {
+									checkAvaPlaces(tempx, tempy);}
 								}
 								canvas.repaint(sx, sy, 57, 57);
 							}
@@ -281,7 +333,7 @@ public class GUI extends JFrame implements ActionListener {
 									clearAvaPlaces();
 									if (currentGame.isGameOver() == -1) {
 										System.out.println("black win");
-										JOptionPane.showMessageDialog(null, "Black has won!", "Alpha-Bob 1.0",
+										JOptionPane.showMessageDialog(null, "Black has won!", "Alpha-Bob 2.7",
 												JOptionPane.INFORMATION_MESSAGE);
 									}
 									ifselectedAPiece = false;
@@ -291,7 +343,8 @@ public class GUI extends JFrame implements ActionListener {
 									bpieceSelected = tempy * 9 + tempx;
 									canvas.repaint(xx, yy, 57, 57);
 									clearAvaPlaces();
-									checkAvaPlaces(tempx, tempy);
+									if(tips) {
+									checkAvaPlaces(tempx, tempy);}
 								}
 								canvas.repaint(sx, sy, 57, 57);
 							}
@@ -299,7 +352,13 @@ public class GUI extends JFrame implements ActionListener {
 					}
 				}
 				if(gameMode == 2) {
+					if(chckbxMoveTips.isSelected()) {
+					    tips =true ;}
+					else {
+						tips=false;}
 					if (!AIThinking) {
+						
+						
 						int x = e.getX();
 						int y = e.getY();
 						if (x >= 24 && x <= 530 && y >= 24 && y <= 596) {
@@ -319,7 +378,8 @@ public class GUI extends JFrame implements ActionListener {
 									preRPieceSelectedx = xx;
 									preRPieceSelectedy = yy;
 									canvas.repaint(xx, yy, 57, 57);
-									checkAvaPlaces(tempx, tempy);
+									if(tips) {
+									checkAvaPlaces(tempx, tempy);}
 								}
 							}
 							else {
@@ -339,7 +399,7 @@ public class GUI extends JFrame implements ActionListener {
 									clearAvaPlaces();
 									if (currentGame.isGameOver() == 1) {
 										System.out.println("red win");
-										JOptionPane.showMessageDialog(null, "Red has won!", "Alpha-Bob 1.0",
+										JOptionPane.showMessageDialog(null, "Red has won!", "Alpha-Bob 2.7",
 												JOptionPane.INFORMATION_MESSAGE);
 									}
 									AIMove();
@@ -348,7 +408,9 @@ public class GUI extends JFrame implements ActionListener {
 									rpieceSelected = tempy * 9 + tempx;
 									canvas.repaint(xx, yy, 57, 57);
 									clearAvaPlaces();
-									checkAvaPlaces(tempx, tempy);
+								if(tips) {
+										 checkAvaPlaces(tempx, tempy) ;}
+									
 								}
 								canvas.repaint(sx, sy, 57, 57);
 							}
@@ -370,8 +432,257 @@ public class GUI extends JFrame implements ActionListener {
 				// TODO Auto-generated method stub
 			}
 		});
-		canvas.setBounds(0, 0, 558, 620);
-		add(canvas);
+
+		
+		JLabel lblCurrentGameMode = new JLabel("Current Game Mode:");
+		lblCurrentGameMode.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblCurrentGameMode.setBounds(10, 11, 139, 15);
+		panel_1.add(lblCurrentGameMode);
+		
+		JLabel CurrentGameLabel = new JLabel("Player vs Player");
+		CurrentGameLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
+		CurrentGameLabel.setBounds(159, 11, 139, 15);
+		panel_1.add(CurrentGameLabel);
+		
+		
+		
+		JPanel panel_2 = new JPanel();
+		panel_2.setBackground(Color.WHITE);
+		panel_2.setBounds(0, 43, 607, 589);
+		panel.add(panel_2);
+		panel_2.setLayout(null);
+				
+		JPanel panel_3 = new JPanel();
+        panel_3.setForeground(Color.WHITE);
+        panel_3.setBackground(Color.WHITE);
+        panel_3.setBounds(0, -21, 607, 510);
+        panel_2.add(panel_3);
+		
+
+        JLabel lblNewLabel=new JLabel();
+        lblNewLabel.setIcon(new ImageIcon("help/BasicBoard.jpg"));
+        lblNewLabel.setBounds(5, 28, 296, 364);
+	    panel_3.add(lblNewLabel);
+	    
+        JLabel lblNewLabel_1 = new JLabel();
+        lblNewLabel_1.setIcon(new ImageIcon("help/BasicBoard.jpg"));
+        lblNewLabel_1.setBounds(301, 28, 296, 364);
+        panel_3.add(lblNewLabel_1);
+       
+        txtrCaptureWhenA2= new JTextArea();
+       // panel_3.add(txtrCaptureWhenA2);
+        txtrCaptureWhenA2.setWrapStyleWord(true);
+        txtrCaptureWhenA2.setLineWrap(true);
+        txtrCaptureWhenA2.setRows(10);
+        txtrCaptureWhenA2.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 13));
+        txtrCaptureWhenA2.setEditable(false);
+        txtrCaptureWhenA2.setBounds(10, 394, 587, 105);
+        panel_3.add(txtrCaptureWhenA2);
+        JScrollPane jsp=new JScrollPane(txtrCaptureWhenA2);        
+        Dimension size=txtrCaptureWhenA2.getSize();    
+        jsp.setBounds(10,394,size.width,size.height);
+        panel_3.add(jsp);   
+       
+	
+		JButton btnNewButton = new JButton("");
+		//btnNewButton.setToolTipText("The Guards (Advisor) move only one space at a time diagonally. Similar to the King, the guards must stay within the palace.");
+
+		btnNewButton.setBounds(42, 500, 52, 52);
+		btnNewButton.setBackground(Color.WHITE);
+		btnNewButton.setForeground(Color.GRAY);
+		btnNewButton.setIcon(new ImageIcon("pieces/wood/ba.gif"));
+		btnNewButton.setBorderPainted(false);
+		//btnNewButton.setContentAreaFilled(false);
+		//btnNewButton.setBounds(87, 473, 52, 52);
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblNewLabel.setIcon(new ImageIcon("help/shi1.jpg"));
+				lblNewLabel_1.setIcon(new ImageIcon("help/shi2.jpg"));
+				txtrCaptureWhenA2.setText("The Guards (Advisor) move only one space at a time diagonally. Similar to the King, the guards must stay within the palace.");
+			}
+		});
+		
+		panel_2.add(btnNewButton);
+		
+		
+		JButton btnNewButton_2 = new JButton("");
+		btnNewButton_2.setBackground(Color.WHITE);
+		btnNewButton_2.setForeground(Color.GRAY);
+		btnNewButton_2.setIcon(new ImageIcon("pieces/wood/bb.gif"));
+		btnNewButton_2.setBorderPainted(false);
+
+		btnNewButton_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblNewLabel.setIcon(new ImageIcon("help/xiang1.jpg"));
+				lblNewLabel_1.setIcon(new ImageIcon("help/BasicBoard.jpg"));
+				txtrCaptureWhenA2.setText("The Ministers (Elephants) move two spaces at a time diagonally (i.e. 2 spaces left/right and 2 spaces up/down in a move). They must stay within their own side of the river. If there is a piece midway between the original and final intended position of a minister, the minister is blocked and the move is not allowed.");
+			}
+			
+		});
+		btnNewButton_2.setBounds(104, 500, 52, 52);
+		panel_2.add(btnNewButton_2);
+		
+		JButton btnNewButton_3 = new JButton("");
+		btnNewButton_3.setBounds(166, 500, 52, 52);
+		btnNewButton_3.setBackground(Color.WHITE);
+		btnNewButton_3.setForeground(Color.GRAY);
+		btnNewButton_3.setIcon(new ImageIcon("pieces/wood/bc.gif"));
+		btnNewButton_3.setBorderPainted(false);
+
+		btnNewButton_3.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblNewLabel.setIcon(new ImageIcon("help/pao1.jpg"));
+				lblNewLabel_1.setIcon(new ImageIcon("help/BasicBoard.jpg"));
+				txtrCaptureWhenA2.setText("The Cannons move one or more spaces horizontally or vertically like a Rook. However, in a capture move, there must be exactly one non-empty space in between the original and final position. In a non-capture move, all spaces in between must be empty。");
+			}
+			
+		});
+		panel_2.add(btnNewButton_3);
+		
+		JButton btnNewButton_4 = new JButton("");
+		btnNewButton_4.setBounds(228, 500, 52, 52);
+		btnNewButton_4.setBackground(Color.WHITE);
+		btnNewButton_4.setForeground(Color.GRAY);
+		btnNewButton_4.setIcon(new ImageIcon("pieces/wood/bk.gif"));
+		btnNewButton_4.setBorderPainted(false);
+
+		btnNewButton_4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblNewLabel.setIcon(new ImageIcon("help/jiang1.jpg"));
+				lblNewLabel_1.setIcon(new ImageIcon("help/jiang2.jpg"));
+				txtrCaptureWhenA2.setText("The King moves only one space at a time, either horizontally or vertically. Further more, the King must always stay within the palace, which is a square marked with an X.");
+			}
+			
+		});
+		panel_2.add(btnNewButton_4);
+		
+		JButton btnNewButton_5 = new JButton("");
+		btnNewButton_5.setBounds(290, 500, 52, 52);
+		btnNewButton_5.setBackground(Color.WHITE);
+		btnNewButton_5.setForeground(Color.GRAY);
+		btnNewButton_5.setIcon(new ImageIcon("pieces/wood/bn.gif"));
+		btnNewButton_5.setBorderPainted(false);
+
+		btnNewButton_5.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblNewLabel.setIcon(new ImageIcon("help/ma1.jpg"));
+				lblNewLabel_1.setIcon(new ImageIcon("help/BasicBoard.jpg"));
+				txtrCaptureWhenA2.setText("The Knights (Horses) move two spaces horizontally and one space vertically (or respectively 2 spaces vertically and one space horizontally). If there is a piece next to the horse in the horizontal (vertical) direction, the horse is blocked and the move is not allowed.");
+			}
+			
+		});
+		panel_2.add(btnNewButton_5);
+		
+		JButton btnNewButton_6 = new JButton("");
+		btnNewButton_6.setBounds(352, 500, 52, 52);
+		btnNewButton_6.setBackground(Color.WHITE);
+		btnNewButton_6.setForeground(Color.GRAY);
+		btnNewButton_6.setIcon(new ImageIcon("pieces/wood/bp.gif"));
+		btnNewButton_6.setBorderPainted(false);
+
+		btnNewButton_6.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblNewLabel.setIcon(new ImageIcon("help/zu1.jpg"));
+				lblNewLabel_1.setIcon(new ImageIcon("help/zu2.jpg"));
+				txtrCaptureWhenA2.setText("The Pawns (or Soldiers) move one space at a time. If a pawn does not cross the river yet, it can only move forward vertically. Once crossing the river, the pawn can also move horizontally.");
+			}
+			
+		});
+		panel_2.add(btnNewButton_6);
+        panel_3.setLayout(null);
+          
+       
+		//panel_3.add(txtrCaptureWhenA);
+		JButton btnBasicRule = new JButton("");
+		btnBasicRule.setIcon(new ImageIcon("help/basic1.jpg"));
+		btnBasicRule.setBorderPainted(false);
+		btnBasicRule.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				txtrCaptureWhenA2.setText("                                                Basic Rule\r\nCapture: When a piece moves to a position currently held by an opponent's piece, it captures that opponent's piece. The captured piece is removed from the board.\r\n\r\nKing safety: One must never leave the King to be captured by the opponent in the next move. Any moves that put the King in such a setting is illegal.\r\n\r\nEnd game condition: The game ends when one of the following situations happens:\r\nCheckmate: If one threatens to capture the opponent's King and the opponent has no way to resolve the threat, one wins.\r\nStalemate: If one does not have any valid move, one loses.");
+			    lblNewLabel.setIcon(new ImageIcon("help/help.jpg"));
+			    lblNewLabel_1.setIcon(new ImageIcon("help/BasicBoard.jpg"));
+				
+				}
+		});
+		btnBasicRule.setBounds(476, 500, 110, 52);
+		panel_2.add(btnBasicRule);
+		
+		JButton btnNewButton_1 = new JButton("");
+		btnNewButton_1.setBounds(414, 500, 52, 52);
+		btnNewButton_1.setBackground(Color.WHITE);
+		btnNewButton_1.setForeground(Color.GRAY);
+		btnNewButton_1.setIcon(new ImageIcon("pieces/wood/br.gif"));
+		btnNewButton_1.setBorderPainted(false);
+
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblNewLabel.setIcon(new ImageIcon("help/che1.jpg"));
+				lblNewLabel_1.setIcon(new ImageIcon("help/BasicBoard.jpg"));
+				txtrCaptureWhenA2.setText("The Rooks (Cars) move one or more spaces horizontally or vertically provided that all positions between the original and final positions are empty.");
+			}
+			
+		});
+		panel_2.add(btnNewButton_1);
+		
+
+	
+		JButton btnStart = new JButton("Start");
+		btnStart.setFont(new Font("Tahoma", Font.BOLD, 12));
+		btnStart.setBounds(285, 8, 89, 23);
+		panel_1.add(btnStart);
+		
+		JButton btnRegret = new JButton("Regret");
+		btnRegret.setFont(new Font("Tahoma", Font.BOLD, 12));
+		btnRegret.setBounds(384, 8, 89, 23);
+		panel_1.add(btnRegret);
+		
+
+		
+		
+		
+		btnStart.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				currentGame.start();
+				clearAvaPlaces();
+				rpieceSelected = -1;
+				rplacePlaced = -1;
+				bpieceSelected = -1;
+				bplacePlaced = -1;
+				gameMode = 1;
+				ifselectedAPiece = false;
+				AIThinking = false;
+				red=false;
+				if(chckbxMoveTips.isSelected()) {
+				    tips =true ;}
+				else {
+					tips=false;
+				}
+				canvas.repaint();
+				CurrentGameLabel.setText("Player vs Player");
+			}
+		});
+		
+		btnRegret.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+
+
+				currentGame.regretMove();
+
+
+				canvas.repaint();
+				currentGame.saveGameboard(currentGame.step);
+				System.out.println("regret move");
+
+			}
+
+
+
+		});
+		
 		menu = new Menu("menu");
 		bar = new MenuBar();
 		bar.add(menu);
@@ -384,23 +695,146 @@ public class GUI extends JFrame implements ActionListener {
 		menu.add(itemExit);
 		menu.add(itemRegret);
 		GameMode =new Menu("GameMode");
-		help =new Menu ("Help");
 		bar.add(GameMode);
-		bar.add(help);
 		setMenuBar(bar);
 		Player_vs_Player = new MenuItem("Player vs Player");
 		Player_vs_AI = new MenuItem("Player vs AI");
-		Help = new MenuItem("Help");
 
 		GameMode.add(Player_vs_Player);
-		GameMode.add(Player_vs_AI);
-		help.add(Help);
+		GameMode.add(Player_vs_AI);	
+		
+		Menu Customize, PieceChoice,BoardChoice;
+	    MenuItem Wood,Cartoon,Delicate,Polish,WoodBoard,Elephant,Horse,BlueBoard,PinkBoard;
+
+	        Customize=new Menu("Customize");
+	        PieceChoice = new Menu("PieceChoice");
+	        BoardChoice = new Menu("BoardChoice");
+	        
+	        Customize.add(PieceChoice);
+	        Customize.add(BoardChoice);
+	        bar.add(Customize);
+	        
+	        Wood = new MenuItem("Wood");
+	        PieceChoice.add(Wood);
+	        
+	        Wood.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e) {
+					piecePath = "wood/";
+					loadPieces();
+					canvas.repaint();
+				}
+			}
+					);
+	        
+	        Cartoon = new MenuItem("Cartoon");
+	        PieceChoice.add(Cartoon);
+	        Cartoon.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e) {
+					piecePath = "cartoon/";
+					loadPieces();
+					canvas.repaint();
+				}
+			}
+					);
+	        
+	        Delicate = new MenuItem("Delicate");
+	        PieceChoice.add(Delicate);
+	        Delicate.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e) {
+					piecePath = "delicate/";
+					loadPieces();
+					canvas.repaint();
+				}
+			}
+					);
+	        
+	        Polish = new MenuItem("Polish");
+	        PieceChoice.add(Polish);
+	        Polish.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e) {
+					piecePath = "polish/";
+					loadPieces();
+					canvas.repaint();
+				}
+			}
+					);
+	        
+	        WoodBoard = new MenuItem("WoodBoard");
+	        BoardChoice.add(WoodBoard);
+	        WoodBoard.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e) {
+					filePath2 = "main";
+					loadBoard();
+					canvas.repaint();
+				}
+			}
+					);
+	        
+	        Elephant = new MenuItem("Elephant Cartoon Board");
+	        BoardChoice.add(Elephant);
+	        Elephant.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e) {
+					filePath2 = "main01";
+					
+					loadBoard();
+					canvas.repaint();
+				}
+			}
+					);
+	        
+	        Horse = new MenuItem("Horse Cartoon Board");
+	        BoardChoice.add(Horse);
+	        Horse.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e) {
+					filePath2 = "main09";
+					
+					loadBoard();
+					canvas.repaint();
+				}
+			}
+					);
+	        
+	        BlueBoard = new MenuItem("BlueBoard");
+	        BoardChoice.add(BlueBoard);
+	        BlueBoard.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e) {
+					filePath2 = "main04";
+					
+					loadBoard();
+					canvas.repaint();
+				}
+			}
+					);
+	        
+	        PinkBoard = new MenuItem("PinkBoard");
+	        BoardChoice.add(PinkBoard);
+	        PinkBoard.addActionListener(new ActionListener()
+			{
+				public void actionPerformed(ActionEvent e) {
+					filePath2 = "main05";
+					
+					loadBoard();
+					canvas.repaint();
+				}
+			}
+					);
+		
+	        
+		
 
 		Player_vs_Player.addActionListener(new ActionListener()
 		{
 			public void actionPerformed(ActionEvent e) {
 				gameMode = 1;
-
+				CurrentGameLabel.setText("Player vs Player");
 				System.out.println("Player vs Player");
 			}
 		}
@@ -409,6 +843,7 @@ public class GUI extends JFrame implements ActionListener {
 		{
 			public void actionPerformed(ActionEvent e) {
 				gameMode = 2;
+				CurrentGameLabel.setText("Player vs AI");
 				System.out.println("Player vs AI");
 			}
 		}
@@ -433,7 +868,13 @@ public class GUI extends JFrame implements ActionListener {
 				ifselectedAPiece = false;
 				AIThinking = false;
 				red=false;
+				if(chckbxMoveTips.isSelected()) {
+				    tips =true ;}
+				else {
+					tips=false;
+				}
 				canvas.repaint();
+				CurrentGameLabel.setText("Player vs Player");
 			}
 		});
 
@@ -462,14 +903,8 @@ public class GUI extends JFrame implements ActionListener {
 
 		});
 
-		// load images
-		File filePath = new File("boards/main.gif");
-		try {
-			BoardImg = ImageIO.read(filePath);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		// load images	
+		loadBoard();
 		loadPieces();
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Dimension frameSize = getSize();
@@ -491,12 +926,23 @@ public class GUI extends JFrame implements ActionListener {
 			System.out.println("lala");
 		}
 	}
+    private void loadBoard() {
+    	String filePath1 = "boards/";
+    	File filePath = new File(filePath1 + filePath2 + ".gif");
+    	try {
+    		BoardImg = ImageIO.read(filePath);
+    	} catch (IOException e) {
+    		// TODO Auto-generated catch block
+    		e.printStackTrace();
+    	}
+    	
+    }
 
 	// function that load piece images
 	private void loadPieces() {
-		String path = "pieces/wood/";
+		String path = "pieces/";
 		for (int i = 1; i < 15; i++) {
-			File file = new File(path + pieces_name[i] + ".gif");
+			File file = new File(path +piecePath + pieces_name[i] + ".gif");
 			try {
 				piecesImg[i] = ImageIO.read(file);
 			} catch (IOException e) {
@@ -504,8 +950,8 @@ public class GUI extends JFrame implements ActionListener {
 				e.printStackTrace();
 			}
 		}
-		File imgFile = new File(path + pieces_name[0] + ".gif");
-		File imgFileb = new File(path + "boos.gif");
+		File imgFile = new File(path +piecePath+ pieces_name[0] + ".gif");
+		File imgFileb = new File(path +piecePath+ "boos.gif");
 		try {
 			selectImgr = ImageIO.read(imgFile);
 		} catch (IOException e) {
@@ -518,7 +964,7 @@ public class GUI extends JFrame implements ActionListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		File imgAva = new File(path + "avp.gif");
+		File imgAva = new File(path+piecePath + "avp.gif");
 		try {
 			avaPlaceImg = ImageIO.read(imgAva);
 		} catch (IOException e) {
@@ -590,7 +1036,7 @@ public class GUI extends JFrame implements ActionListener {
 				System.out.println("step: "+currentGame.step);
 				if (currentGame.isGameOver() == -1) {
 					System.out.println("black win");
-					JOptionPane.showMessageDialog(null, "Black has won!", "Alpha-Bob 1.0",
+					JOptionPane.showMessageDialog(null, "Black has won!", "Alpha-Bob 2.7",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 				AIThinking = false;
@@ -601,7 +1047,6 @@ public class GUI extends JFrame implements ActionListener {
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		System.out.println("hello");
-		new GUI("Alpha-Bob 1.0");
+		new GUI("Alpha-Bob 2.7");
 	}
-
 }
