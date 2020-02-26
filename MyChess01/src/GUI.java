@@ -1,4 +1,13 @@
 /*
+ * Class:       	CS 4850 Section 1
+ * Term:        	Spring 2020
+ * Name:        	Zhengrui Xia, Wanrong(Helen) Zhao, Liqiong Zhao, Yixian Lin, Shuaixin Li
+ * Project:  		Project 6C: AI and Chess Variant
+ * Description: 	We developed a game application for Chinese Chess players via Java. 
+ * 					Players are able to practice their skills with AI and compete with other players offline. 
+ */
+
+/*
  * 
  * GUI class
  * 		1. initiate program (main function)
